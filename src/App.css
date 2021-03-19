@@ -1,0 +1,16 @@
+img {
+  width: 40%;
+  position: absolute;
+  left: 0px;
+  top: 0px
+}
+
+.App {
+  text-align: center;
+  justify-content: center;
+}
+
+.circle {
+  width: 1%;
+  position: absolute;
+}
