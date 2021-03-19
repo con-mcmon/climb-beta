@@ -1,8 +1,5 @@
 img {
   width: 40%;
-  position: absolute;
-  left: 0px;
-  top: 0px
 }
 
 .App {
@@ -10,7 +7,21 @@ img {
   justify-content: center;
 }
 
-.circle {
-  width: 1%;
+.icon {
+  width: 3%;
   position: absolute;
+}
+
+.tool-box {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-style: solid;
+}
+
+.image-zoom {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-style: solid;
 }
