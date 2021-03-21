@@ -50,10 +50,6 @@ class Route extends Component {
         x: 0,
         y:0
       },
-      imageOffset: {
-        x: 0,
-        y: 0
-      },
       imageWidth: 0,
       imageHeight: 0,
       onImage: false,
@@ -106,28 +102,21 @@ class Route extends Component {
       imageHeight: e.target.height });
   }
 
-  handleMouseOver = (e) => {
-    this.setState({
-      onImage: true,
-      imageOffset: {
-        x: e.target.offsetParent.offsetLeft,
-        y: e.target.offsetParent.offsetTop }
-      });
-    }
+  handleMouseOver = (e) => this.setState({ onImage: true });
 
-  handleMouseLeave = (e) => {
-    this.setState({ onImage: false });
-  }
+  handleMouseLeave = (e) => this.setState({ onImage: false });
 
   handleClick = (e) => {
-    this.setState({ toolBox: <ToolBox coordinates={{ x:e.nativeEvent.offsetX, y:e.nativeEvent.offsetY }} handleClick={this.handleToolBoxClick} /> });
+    this.setState({ toolBox: <ToolBox
+                                coordinates={{ x:e.nativeEvent.offsetX, y:e.nativeEvent.offsetY }}
+                                handleClick={this.handleToolBoxClick} /> });
   }
 
   handleToolBoxClick = (type, x, y) => {
     const percentValues = pxToPercent(x, y, this.state.imageWidth, this.state.imageHeight);
     this.setState((prevState) => (
       {
-        touchPoints: [...prevState.touchPoints, {type: type, x:percentValues.x, y:percentValues.y}],
+        touchPoints: [...prevState.touchPoints, { type: type, x:percentValues.x, y:percentValues.y }],
         toolBox: null
       }
     ))
@@ -146,14 +135,13 @@ class Route extends Component {
     return (
       <div>
         <h1>{ x } { y }</h1>
-        <div className='route' onMouseOver={this.handleMouseOver} >
+        <div className='route' onMouseOver={this.handleMouseOver} onMouseMove={this.handleMouseMove} >
           <img
             className='route-img'
             ref={this.image}
             onLoad={this.handleImageLoad}
             src={this.props.route.image}
             alt={this.props.route.alt}
-            onMouseMove={this.handleMouseMove}
             onMouseLeave={this.handleMouseLeave}
             onClick={this.handleClick} />
           {this.renderCruxNodes()}
