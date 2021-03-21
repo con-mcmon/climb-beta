@@ -1,13 +1,21 @@
-img {
-  width: 40%;
-}
-
 .App {
   text-align: center;
   justify-content: center;
 }
 
-.icon {
+.route {
+  position: relative;
+  margin: auto;
+  width: 90%;
+  height: 90%;
+}
+
+.route-img {
+  width: 100%;
+  height: auto;
+}
+
+.touch-point {
   width: 3%;
   position: absolute;
 }
@@ -23,5 +31,14 @@ img {
   position: absolute;
   width: 100px;
   height: 100px;
+  border-style: solid;
+}
+
+img.crux-node {
+  position: absolute;
+  width: 5%;
+}
+
+img.crux-node:hover {
   border-style: solid;
 }
