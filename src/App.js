@@ -30,12 +30,26 @@ class App extends Component {
     super();
     this.state = {
       route: routes.churningInTheWake,
+      coordinates: {
+        x: 0,
+        y: 0
+      }
     }
   }
 
+  handleMouseMove = (e) => {
+    this.setState({
+      coordinates: {
+        x: e.clientX,
+        y: e.clientY
+      }});
+    }
+
   render() {
+    const { x, y } = this.state.coordinates;
     return (
-      <div className="App" >
+      <div className="App" onMouseMove={this.handleMouseMove} >
+        <h1>{ x } { y }</h1>
         <Route route={this.state.route} />
       </div>
     );
@@ -122,20 +136,10 @@ class Route extends Component {
     ))
   }
 
-  handleMouseMove = (e) => {
-    this.setState({
-      coordinates: {
-        x: e.clientX,
-        y: e.clientY
-      }});
-    }
-
   render() {
-    const { x, y } = this.state.coordinates;
     return (
       <div>
-        <h1>{ x } { y }</h1>
-        <div className='route' onMouseOver={this.handleMouseOver} onMouseMove={this.handleMouseMove} >
+        <div className='route' onMouseOver={this.handleMouseOver} >
           <img
             className='route-img'
             ref={this.image}
