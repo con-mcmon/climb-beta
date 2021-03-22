@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import './App.css';
 import routes from './content/routes';
 import circle from './content/images/circle.png';
+import blueCircle from './content/images/circle-blue.png';
 import rightHand from './content/images/hand-right.png';
 import leftHand from './content/images/hand-left.png';
 import rightFoot from './content/images/foot-right.png';
 import leftFoot from './content/images/foot-left.png';
 
-function intToPx(num) {
+function toPx(num) {
   return num + 'px';
 }
 
@@ -67,7 +68,7 @@ class Route extends Component {
       imageWidth: 0,
       imageHeight: 0,
       onImage: false,
-      touchPoints: [],
+      touchNodes: [],
       toolBox: null,
       crux: null
     }
@@ -99,9 +100,9 @@ class Route extends Component {
               })
             }
 
-  renderTouchPoints = () => {
-    return this.state.touchPoints.map(({ type, x, y }, index) => {
-      return <TouchPoint
+  renderTouchNodes = () => {
+    return this.state.touchNodes.map(({ type, x, y }, index) => {
+      return <TouchNode
                 key={index}
                 type={type}
                 coordinates={{ x:x, y:y }}
@@ -130,7 +131,7 @@ class Route extends Component {
     const percentValues = pxToPercent(x, y, this.state.imageWidth, this.state.imageHeight);
     this.setState((prevState) => (
       {
-        touchPoints: [...prevState.touchPoints, { type: type, x:percentValues.x, y:percentValues.y }],
+        touchNodes: [...prevState.touchNodes, { type: type, x:percentValues.x, y:percentValues.y }],
         toolBox: null
       }
     ))
@@ -141,7 +142,7 @@ class Route extends Component {
       <div>
         <div className='route' onMouseOver={this.handleMouseOver} >
           <img
-            className='route-img'
+            className='route'
             ref={this.image}
             onLoad={this.handleImageLoad}
             src={this.props.route.image}
@@ -149,7 +150,7 @@ class Route extends Component {
             onMouseLeave={this.handleMouseLeave}
             onClick={this.handleClick} />
           {this.renderCruxNodes()}
-          {this.renderTouchPoints()}
+          {this.renderTouchNodes()}
           {this.state.toolBox}
         </div>
       </div>
@@ -165,35 +166,63 @@ class Route extends Component {
 //   )
 // }
 
-function TouchPoint(props) {
-  const { x, y } = percentToPx(props.coordinates.x, props.coordinates.y, props.imageWidth, props.imageHeight);
-
-  let icon;
-  switch (props.type) {
-    case 'rightFoot':
-      icon = rightFoot;
-      break;
-    case 'leftFoot':
-      icon = leftFoot;
-      break;
-    case 'rightHand':
-      icon = rightHand;
-      break;
-    case 'leftHand':
-      icon = leftHand;
-      break;
-    default:
-      icon = null;
-      break;
+class TouchNode extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hovered: false,
+      clicked: false,
+      divWidth: 0,
+      divHeight: 0
+    }
+    this.div = React.createRef();
   }
-  return (
-    <img
-      src={icon}
-      className='touch-point'
-      alt='icon'
-      style={{ left:intToPx(x), top:intToPx(y) }} />
-    )
-}
+
+  componentDidMount = () => {
+    window.addEventListener('resize', this.updateDivDimensions);
+    this.updateDivDimensions();
+  }
+
+  updateDivDimensions = () => {
+    this.setState({
+      divWidth: this.div.current.offsetWidth,
+      divHeight: this.div.current.offsetHeight })
+  }
+
+  shiftCenter = () => {
+    const clickLocation = percentToPx(this.props.coordinates.x, this.props.coordinates.y, this.props.imageWidth, this.props.imageHeight);
+    return {
+      x: clickLocation.x - (this.state.divWidth / 2),
+      y: clickLocation.y - (this.state.divHeight / 2)
+    };
+  }
+
+  handleMouseEnter = () => this.setState({ hovered: true });
+
+  handleMouseLeave = () => this.setState({ hovered: false });
+
+  handleClick = () => this.setState({ clicked: true })
+
+  render() {
+    const { x, y } = this.shiftCenter();
+    return (
+      <div
+        ref={this.div}
+        className='touch-point'
+        style={{ left:toPx(x), top:toPx(y) }} >
+        <img
+          src={blueCircle}
+          type={this.props.type}
+          className='touch-point'
+          alt='icon'
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          onClick={this.handleClick} />
+        <span className='touch-point'>{this.state.hovered ? this.props.type : null}</span>
+      </div>
+      )
+    }
+  }
 
 class ToolBox extends Component {
   constructor(props) {
@@ -209,7 +238,7 @@ class ToolBox extends Component {
 
   render() {
     return (
-      <div className='tool-box' style={{ left:intToPx(this.x), top:intToPx(this.y) }}>
+      <div className='tool-box' style={{ left:toPx(this.x), top:toPx(this.y) }}>
         <button onClick={this.handleClick} value={'rightFoot'}>Right Foot</button>
         <button onClick={this.handleClick} value={'leftFoot'}>Left Foot</button>
         <button onClick={this.handleClick} value={'rightHand'}>Right Hand</button>
@@ -225,7 +254,7 @@ function CruxNode(props) {
       src={circle}
       alt={props.alt}
       className='crux-node'
-      style={{ left:intToPx(props.coordinates.x), top:intToPx(props.coordinates.y) }} />
+      style={{ left:toPx(props.coordinates.x), top:toPx(props.coordinates.y) }} />
     )
 }
 

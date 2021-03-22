@@ -10,14 +10,27 @@
   height: 90%;
 }
 
-.route-img {
+img.route {
   width: 100%;
   height: auto;
 }
 
-.touch-point {
-  width: 3%;
+div.touch-point {
+  border-style: solid;
+  width: 2%;
   position: absolute;
+  text-align: center;
+}
+
+img.touch-point {
+  width: 100%;
+  cursor: pointer;
+}
+
+span.touch-point {
+  position: absolute;
+  font-weight: bold;
+  padding-left: 50%;
 }
 
 .tool-box {
