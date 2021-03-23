@@ -61,10 +61,6 @@ class Route extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      coordinates: {
-        x: 0,
-        y:0
-      },
       imageWidth: 0,
       imageHeight: 0,
       onImage: false,
