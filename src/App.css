@@ -3,11 +3,16 @@
   justify-content: center;
 }
 
-.route {
+div.route-container {
+  position: absolute;
+  width: 100%;
+}
+
+div.route {
   position: relative;
   margin: auto;
-  width: 90%;
-  height: 90%;
+  width: 60%;
+  border-style: solid;
 }
 
 img.route {
@@ -15,19 +20,19 @@ img.route {
   height: auto;
 }
 
-div.touch-point {
+div.touch-node {
   border-style: solid;
   width: 2%;
   position: absolute;
   text-align: center;
 }
 
-img.touch-point {
+img.touch-node {
   width: 100%;
   cursor: pointer;
 }
 
-span.touch-point {
+span.touch-node {
   position: absolute;
   font-weight: bold;
   padding-left: 50%;
@@ -35,8 +40,7 @@ span.touch-point {
 
 .tool-box {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: 15%;
   border-style: solid;
 }
 
@@ -50,8 +54,9 @@ span.touch-point {
 img.crux-node {
   position: absolute;
   width: 5%;
+  cursor: pointer;
 }
 
 img.crux-node:hover {
-  border-style: solid;
+
 }

@@ -7,7 +7,12 @@ export default {
     alt: 'churning in the wake',
     crux: [
     {
-      coords: {x:50, y:50},
+      coords: {x:45, y:15},
+      image: churningInTheWakeCrux,
+      alt: 'churning in the wake crux'
+    },
+    {
+      coords: {x:75, y:90},
       image: churningInTheWakeCrux,
       alt: 'churning in the wake crux'
     },
