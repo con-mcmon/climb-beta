@@ -252,8 +252,12 @@ class TouchNode extends Component {
   }
 
   componentDidMount = () => {
-    window.addEventListener('resize', this.updateDivDimensions);
     this.updateDivDimensions();
+    window.addEventListener('resize', this.updateDivDimensions);
+  }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('resize', this.updateDivDimensions);
   }
 
   updateDivDimensions = () => {
