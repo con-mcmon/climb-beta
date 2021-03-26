@@ -1,27 +1,10 @@
 import React, { Component, useRef, useState, useEffect } from 'react';
 import './App.css';
+import { toPx, percentToPx, pxToPercent } from './helpers';
 import routes from './content/routes';
 import blackCircle from './content/images/circle-black.png';
 import redCircle from './content/images/circle-red.png';
 import blueCircle from './content/images/circle-blue.png';
-
-function toPx(num) {
-  return num + 'px';
-}
-
-function percentToPx(x, y, imageWidth, imageHeight) {
-  return {
-    x: (x / 100) * imageWidth,
-    y: (y / 100) * imageHeight
-  }
-}
-
-function pxToPercent(x, y, imageWidth, imageHeight) {
-  return {
-    x: (x / imageWidth) * 100,
-    y: (y / imageHeight) * 100
-  }
-}
 
 class App extends Component {
   constructor(props) {
@@ -210,16 +193,8 @@ class Route extends Component {
     }
   }
 
-// {this.state.onImage ? <ImageZoom coordinates={{ x:this.state.coordinates.x, y:this.state.coordinates.y }} /> : null}
-// function ImageZoom(props) {
-//   return (
-//     <div className='image-zoom' style={{ left:props.coordinates.x + 'px', top:props.coordinates.y + 'px' }}>
-//     </div>
-//   )
-// }
-
 function ToolBox(props) {
-  const [x, y] = [props.coordinates.x, props.coordinates.y];
+  const { x, y } = props.coordinates;
   const handleClick = (e) => props.handleClick(e.target.value, x, y);
 
   return (
