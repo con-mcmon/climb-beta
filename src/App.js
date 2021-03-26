@@ -4,10 +4,6 @@ import routes from './content/routes';
 import blackCircle from './content/images/circle-black.png';
 import redCircle from './content/images/circle-red.png';
 import blueCircle from './content/images/circle-blue.png';
-import rightHand from './content/images/hand-right.png';
-import leftHand from './content/images/hand-left.png';
-import rightFoot from './content/images/foot-right.png';
-import leftFoot from './content/images/foot-left.png';
 
 function toPx(num) {
   return num + 'px';
