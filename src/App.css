@@ -25,6 +25,7 @@ div.touch-node {
   width: 3%;
   position: absolute;
   text-align: center;
+  cursor: pointer;
 }
 
 img.touch-node {
