@@ -22,14 +22,14 @@ img.route {
 
 div.touch-node {
   border-style: solid;
-  width: 2%;
+  width: 3%;
   position: absolute;
   text-align: center;
 }
 
 img.touch-node {
   width: 100%;
-  cursor: pointer;
+  pointer-events: none;
 }
 
 span.touch-node {

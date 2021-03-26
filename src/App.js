@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useRef, useState, useEffect } from 'react';
 import './App.css';
 import routes from './content/routes';
 import blackCircle from './content/images/circle-black.png';
@@ -50,7 +50,7 @@ class App extends Component {
   }
 
   handleKeyDown = (e) => {
-    if(e.keyCode === 27) {
+    if (e.keyCode === 27) {
       this.setState({ crux: null });
     }
   }
@@ -62,6 +62,10 @@ class App extends Component {
         y: e.clientY
       }});
     }
+
+  handleTouchNodeMove = (nodeID, x, y) => {
+    this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, x: x, y: y} : node) }))
+  }
 
   renderRoute = (parent) => {
     let params = {};
@@ -88,6 +92,7 @@ class App extends Component {
               style={params.style}
               handleCruxNodeClick={this.handleCruxNodeClick}
               handleCloseClick={this.handleCruxCloseClick}
+              handleMouseMove={this.handleTouchNodeMove}
               addNode={this.addNode}
               touchNodes={this.state.nodes} />
   }
@@ -97,12 +102,11 @@ class App extends Component {
   handleCruxCloseClick = () => this.setState({ crux: null });
 
   addNode = (type, x, y, parent) => {
-    this.setState((prevState) => ({ nodes: [...prevState.nodes, { type: type, x:x, y:y, parent:parent }] }));
+    this.setState((state) => ({ nodes: [...state.nodes, { id: state.nodes.length, type: type, x: x, y: y, parent: parent }] }));
   }
 
   render() {
     const { x, y } = this.state.coordinates;
-    const route = this.state.route;
     return (
       <div className="App" onMouseMove={this.handleMouseMove} >
         <h1>{ x } { y }</h1>
@@ -120,7 +124,7 @@ class Route extends Component {
       imageWidth: 0,
       imageHeight: 0,
       onImage: false,
-      toolBox: null
+      toolBox: null,
     }
     this.image = React.createRef();
   }
@@ -145,7 +149,7 @@ class Route extends Component {
       return <CruxNode
                 coordinates={{ x:x, y:y }}
                 key={index}
-                name={index}
+                id={index}
                 handleClick={this.props.handleCruxNodeClick} />
               })
             }
@@ -153,13 +157,15 @@ class Route extends Component {
   renderTouchNodes = () => {
     return this.props.touchNodes
       .filter(({ parent }) => parent === this.props.name)
-      .map(({ type, x, y }, index) => {
+      .map(({ id, type, x, y }) => {
+        const coords = percentToPx(x, y, this.state.imageWidth, this.state.imageHeight);
         return <TouchNode
-                  key={index}
+                  key={id}
+                  id={id}
                   type={type}
-                  coordinates={{ x:x, y:y }}
-                  imageWidth={this.state.imageWidth}
-                  imageHeight={this.state.imageHeight} /> })
+                  coordinates={{ x:coords.x, y:coords.y }}
+                  containerDimensions={{ x: this.state.imageWidth, y: this.state.imageHeight}}
+                  handleMouseMove={this.handleMouseMove} /> })
     }
 
   handleImageLoad = (e) => {
@@ -168,9 +174,10 @@ class Route extends Component {
       imageHeight: e.target.height });
   }
 
-  handleMouseOver = (e) => this.setState({ onImage: true });
-
-  handleMouseLeave = (e) => this.setState({ onImage: false });
+  handleMouseMove = (id, xCoord, yCoord) => {
+    const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageWidth, this.state.imageHeight);
+    this.props.handleMouseMove(id, x, y);
+  }
 
   handleClick = (e) => {
     this.setState({ toolBox: <ToolBox
@@ -187,15 +194,15 @@ class Route extends Component {
   render() {
     return (
       <div className='route-container' >
-        <div className='route' style={this.props.style} >
+        <div className='route' style={this.props.style} onDragEnd={this.handleDragEnd} >
           <img
             className='route'
             ref={this.image}
             onLoad={this.handleImageLoad}
             src={this.props.image}
             alt={this.props.alt}
-            onMouseLeave={this.handleMouseLeave}
-            onMouseOver={this.handleMouseOver}
+            onMouseOver={ () => this.setState({ onImage: true }) }
+            onMouseLeave={ () => this.setState({ onImage: false }) }
             onClick={this.handleClick} />
           {this.props.crux ? this.renderCruxNodes() : null}
           {this.renderTouchNodes()}
@@ -244,7 +251,7 @@ class TouchNode extends Component {
     super(props);
     this.state = {
       hovered: false,
-      clicked: false,
+      mouseDown: false,
       divWidth: 0,
       divHeight: 0
     }
@@ -267,18 +274,31 @@ class TouchNode extends Component {
   }
 
   shiftCenter = () => {
-    const clickLocation = percentToPx(this.props.coordinates.x, this.props.coordinates.y, this.props.imageWidth, this.props.imageHeight);
     return {
-      x: clickLocation.x - (this.state.divWidth / 2),
-      y: clickLocation.y - (this.state.divHeight / 2)
+      x: this.props.coordinates.x - (this.state.divWidth / 2),
+      y: this.props.coordinates.y - (this.state.divHeight / 2)
     };
   }
 
   handleMouseEnter = () => this.setState({ hovered: true });
 
-  handleMouseLeave = () => this.setState({ hovered: false });
+  handleMouseLeave = () => {
+    this.setState({
+      mouseDown: false,
+      hovered: false
+    });
+  }
 
-  handleClick = () => this.setState({ clicked: true });
+  onMouseMove = (event) => {
+    if (this.state.mouseDown) {
+      const x = this.props.coordinates.x + event.movementX;
+      const y = this.props.coordinates.y + event.movementY;
+      const insideContainer = (x > 0 && x < this.props.containerDimensions.x) && (y > 0 && y < this.props.containerDimensions.y);
+      if (insideContainer) {
+        this.props.handleMouseMove(this.props.id, this.props.coordinates.x + event.movementX, this.props.coordinates.y + event.movementY)
+      }
+    }
+  }
 
   render() {
     const { x, y } = this.shiftCenter();
@@ -286,15 +306,16 @@ class TouchNode extends Component {
       <div
         ref={this.div}
         className='touch-node'
-        style={{ left:toPx(x), top:toPx(y) }} >
+        style={{ left:toPx(x), top:toPx(y) }}
+        onMouseMove={this.onMouseMove}
+        onMouseDown={() => this.setState({ mouseDown: true }) }
+        onMouseUp={ () => this.setState({ mouseDown: false }) }
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave} >
         <img
           src={blueCircle}
-          type={this.props.type}
           className='touch-node'
-          alt='icon'
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-          onClick={this.handleClick} />
+          alt='touch node' />
         <span className='touch-node'>{this.state.hovered ? this.props.type : null}</span>
       </div>
       )
@@ -314,7 +335,7 @@ class CruxNode extends Component {
 
   handleMouseLeave = () => this.setState({ hovered: false });
 
-  handleClick = () => this.props.handleClick(this.props.name);
+  handleClick = () => this.props.handleClick(this.props.id);
 
   render() {
     return (
