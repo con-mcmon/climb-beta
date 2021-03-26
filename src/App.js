@@ -108,7 +108,7 @@ class App extends Component {
   render() {
     const { x, y } = this.state.coordinates;
     return (
-      <div className="App" onMouseMove={this.handleMouseMove} >
+      <div className="App" handleMouseMove={this.handleMouseMove} >
         <h1>{ x } { y }</h1>
         {this.renderRoute(true)}
         {this.state.crux !== null ? this.renderRoute(false) : null}
@@ -223,8 +223,7 @@ class Route extends Component {
 // }
 
 function ToolBox(props) {
-  const x = props.coordinates.x;
-  const y = props.coordinates.y;
+  const [x, y] = [props.coordinates.x, props.coordinates.y];
   const handleClick = (e) => props.handleClick(e.target.value, x, y);
 
   return (
@@ -280,10 +279,9 @@ class TouchNode extends Component {
     });
   }
 
-  onMouseMove = (event) => {
+  handleMouseMove = (event) => {
     if (this.state.mouseDown) {
-      const x = this.props.coordinates.x + event.movementX;
-      const y = this.props.coordinates.y + event.movementY;
+      const [x, y] = [this.props.coordinates.x + event.movementX, this.props.coordinates.y + event.movementY];
       const insideContainer = (x > 0 && x < this.props.containerDimensions.x) && (y > 0 && y < this.props.containerDimensions.y);
       if (insideContainer) {
         this.props.handleMouseMove(this.props.id, this.props.coordinates.x + event.movementX, this.props.coordinates.y + event.movementY)
@@ -298,7 +296,7 @@ class TouchNode extends Component {
         ref={this.div}
         className='touch-node'
         style={{ left:toPx(x), top:toPx(y) }}
-        onMouseMove={this.onMouseMove}
+        onMouseMove={this.handleMouseMove}
         onMouseDown={() => this.setState({ mouseDown: true }) }
         onMouseUp={ () => this.setState({ mouseDown: false }) }
         onMouseEnter={this.handleMouseEnter}
