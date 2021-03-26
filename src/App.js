@@ -104,7 +104,7 @@ class App extends Component {
   render() {
     const { x, y } = this.state.coordinates;
     return (
-      <div className="App" handleMouseMove={this.handleMouseMove} >
+      <div className="App" onMouseMove={this.handleMouseMove} >
         <h1>{ x } { y }</h1>
         {this.renderRoute(true)}
         {this.state.crux !== null ? this.renderRoute(false) : null}
@@ -307,33 +307,19 @@ class TouchNode extends Component {
     }
   }
 
-class CruxNode extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hovered: false,
-      clicked: false,
-    }
+function CruxNode(props) {
+  const [hovered, setHovered] = useState(false);
+  const { x, y } = props.coordinates;
+  return (
+    <img
+      src={hovered ? redCircle : blackCircle}
+      alt='crux node'
+      className='crux-node'
+      style={{ left:toPx(x), top:toPx(y) }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => props.handleClick(props.id)} />
+    )
   }
-
-  handleMouseEnter = () => this.setState({ hovered: true });
-
-  handleMouseLeave = () => this.setState({ hovered: false });
-
-  handleClick = () => this.props.handleClick(this.props.id);
-
-  render() {
-    return (
-      <img
-        src={this.state.hovered ? redCircle : blackCircle}
-        alt='Crux Node'
-        className='crux-node'
-        style={{ left:toPx(this.props.coordinates.x), top:toPx(this.props.coordinates.y) }}
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave}
-        onClick={this.handleClick} />
-      )
-  }
-}
 
 export default App;
