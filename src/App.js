@@ -222,28 +222,19 @@ class Route extends Component {
 //   )
 // }
 
-class ToolBox extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      enabled: false
-    }
-    this.x = props.coordinates.x;
-    this.y = props.coordinates.y;
-  }
+function ToolBox(props) {
+  const x = props.coordinates.x;
+  const y = props.coordinates.y;
+  const handleClick = (e) => props.handleClick(e.target.value, x, y);
 
-  handleClick = (e) => this.props.handleClick(e.target.value, this.x, this.y);
-
-  render() {
-    return (
-      <div className='tool-box' style={{ left:toPx(this.x), top:toPx(this.y) }}>
-        <button onClick={this.handleClick} value={'rightFoot'}>Right Foot</button>
-        <button onClick={this.handleClick} value={'leftFoot'}>Left Foot</button>
-        <button onClick={this.handleClick} value={'rightHand'}>Right Hand</button>
-        <button onClick={this.handleClick} value={'leftHand'}>Left Hand</button>
-      </div>
-    )
-  }
+  return (
+    <div className='tool-box' style={{ left:toPx(x), top:toPx(y) }}>
+      <button onClick={handleClick} value={'rightFoot'}>Right Foot</button>
+      <button onClick={handleClick} value={'leftFoot'}>Left Foot</button>
+      <button onClick={handleClick} value={'rightHand'}>Right Hand</button>
+      <button onClick={handleClick} value={'leftHand'}>Left Hand</button>
+    </div>
+  )
 }
 
 class TouchNode extends Component {
