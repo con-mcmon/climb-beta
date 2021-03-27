@@ -1,10 +1,8 @@
-import React, { Component, useRef, useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
+import { TouchNode, CruxNode } from './nodes';
 import routes from './content/routes';
-import blackCircle from './content/images/circle-black.png';
-import redCircle from './content/images/circle-red.png';
-import blueCircle from './content/images/circle-blue.png';
 
 class App extends Component {
   constructor(props) {
@@ -206,95 +204,5 @@ function ToolBox(props) {
     </div>
   )
 }
-
-class TouchNode extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hovered: false,
-      mouseDown: false,
-      divWidth: 0,
-      divHeight: 0
-    }
-    this.div = React.createRef();
-  }
-
-  componentDidMount = () => {
-    this.updateDivDimensions();
-    window.addEventListener('resize', this.updateDivDimensions);
-  }
-
-  componentWillUnmount = () => {
-    window.removeEventListener('resize', this.updateDivDimensions);
-  }
-
-  updateDivDimensions = () => {
-    this.setState({
-      divWidth: this.div.current.offsetWidth,
-      divHeight: this.div.current.offsetHeight })
-  }
-
-  shiftCenter = () => {
-    return {
-      x: this.props.coordinates.x - (this.state.divWidth / 2),
-      y: this.props.coordinates.y - (this.state.divHeight / 2)
-    };
-  }
-
-  handleMouseEnter = () => this.setState({ hovered: true });
-
-  handleMouseLeave = () => {
-    this.setState({
-      mouseDown: false,
-      hovered: false
-    });
-  }
-
-  handleMouseMove = (event) => {
-    if (this.state.mouseDown) {
-      const [x, y] = [this.props.coordinates.x + event.movementX, this.props.coordinates.y + event.movementY];
-      const insideContainer = (x > 0 && x < this.props.containerDimensions.x) && (y > 0 && y < this.props.containerDimensions.y);
-      if (insideContainer) {
-        this.props.handleMouseMove(this.props.id, this.props.coordinates.x + event.movementX, this.props.coordinates.y + event.movementY)
-      }
-    }
-  }
-
-  render() {
-    const { x, y } = this.shiftCenter();
-    return (
-      <div
-        ref={this.div}
-        className='touch-node'
-        style={{ left:toPx(x), top:toPx(y) }}
-        onMouseMove={this.handleMouseMove}
-        onMouseDown={() => this.setState({ mouseDown: true }) }
-        onMouseUp={ () => this.setState({ mouseDown: false }) }
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave} >
-        <img
-          src={blueCircle}
-          className='touch-node'
-          alt='touch node' />
-        <span className='touch-node'>{this.state.hovered ? this.props.type : null}</span>
-      </div>
-      )
-    }
-  }
-
-function CruxNode(props) {
-  const [hovered, setHovered] = useState(false);
-  const { x, y } = props.coordinates;
-  return (
-    <img
-      src={hovered ? redCircle : blackCircle}
-      alt='crux node'
-      className='crux-node'
-      style={{ left:toPx(x), top:toPx(y) }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={() => props.handleClick(props.id)} />
-    )
-  }
 
 export default App;
