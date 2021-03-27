@@ -10,7 +10,7 @@ class App extends Component {
     this.state = {
       route: routes.churningInTheWake,
       crux: null,
-      nodes: [{"id":0,"type":"rightFoot","x":80.81705150976904,"y":5.725699067909445,"parent":"main"}],
+      nodes: [],
       coordinates: {
         x: 0,
         y: 0
