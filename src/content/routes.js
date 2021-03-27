@@ -1,7 +1,7 @@
 import churningInTheWake from './images/churning-in-the-wake.jpg';
 import churningInTheWakeCrux from './images/churning-in-the-wake_crux.jpg';
 
-export default {
+const routes = {
   churningInTheWake: {
     image: churningInTheWake,
     alt: 'churning in the wake',
@@ -19,3 +19,5 @@ export default {
     ]
   }
 }
+
+export default routes;
