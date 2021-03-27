@@ -98,8 +98,10 @@ class Route extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageWidth: 0,
-      imageHeight: 0,
+      imageDimensions: {
+        x: 0,
+        y:0
+      },
       onImage: false,
       toolBox: null,
     }
@@ -114,15 +116,11 @@ class Route extends Component {
     window.removeEventListener('resize', this.updateImageDimensions);
   }
 
-  updateImageDimensions = () => {
-    this.setState({
-      imageWidth: this.image.current.width,
-      imageHeight: this.image.current.height });
-  }
+  updateImageDimensions = () => this.setState({ imageDimensions: { x: this.image.current.width, y: this.image.current.height } });
 
   renderCruxNodes = () => {
     return this.props.crux.map(({ coords }, index) => {
-      const { x, y } = percentToPx(coords.x, coords.y, this.state.imageWidth, this.state.imageHeight);
+      const { x, y } = percentToPx(coords.x, coords.y, this.state.imageDimensions.x, this.state.imageDimensions.y);
       return <CruxNode
                 coordinates={{ x:x, y:y }}
                 key={index}
@@ -135,24 +133,20 @@ class Route extends Component {
     return this.props.touchNodes
       .filter(({ parent }) => parent === this.props.name)
       .map(({ id, type, x, y }) => {
-        const coords = percentToPx(x, y, this.state.imageWidth, this.state.imageHeight);
+        const coords = percentToPx(x, y, this.state.imageDimensions.x, this.state.imageDimensions.y);
         return <TouchNode
                   key={id}
                   id={id}
                   type={type}
                   coordinates={{ x:coords.x, y:coords.y }}
-                  containerDimensions={{ x: this.state.imageWidth, y: this.state.imageHeight}}
+                  containerDimensions={{ x: this.state.imageDimensions.x, y: this.state.imageDimensions.y}}
                   handleMouseMove={this.handleMouseMove} /> })
     }
 
-  handleImageLoad = (e) => {
-    this.setState({
-      imageWidth: e.target.width,
-      imageHeight: e.target.height });
-  }
+  handleImageLoad = (e) => this.setState({ imageDimensions: { x:  e.target.width, y: e.target.height } });
 
   handleMouseMove = (id, xCoord, yCoord) => {
-    const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageWidth, this.state.imageHeight);
+    const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageDimensions.x, this.state.imageDimensions.y);
     this.props.handleMouseMove(id, x, y);
   }
 
@@ -163,7 +157,7 @@ class Route extends Component {
   }
 
   handleToolBoxClick = (type, xCoord, yCoord) => {
-    const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageWidth, this.state.imageHeight);
+    const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageDimensions.x, this.state.imageDimensions.y);
     this.props.addNode(type, x, y, this.props.name);
     this.setState({ toolBox: null });
   }
