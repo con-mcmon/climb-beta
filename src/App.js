@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component, createRef } from 'react';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
 import { TouchNode, CruxNode } from './nodes';
@@ -105,18 +105,26 @@ class Route extends Component {
       onImage: false,
       toolBox: null,
     }
-    this.image = React.createRef();
+    this.image = createRef();
   }
 
   componentDidMount = () => {
     window.addEventListener('resize', this.updateImageDimensions);
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount = () => {
     window.removeEventListener('resize', this.updateImageDimensions);
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   updateImageDimensions = () => this.setState({ imageDimensions: { x: this.image.current.width, y: this.image.current.height } });
+
+  handleKeyDown = (e) => {
+    if (e.keyCode === 27) {
+      this.closeToolBox();
+    }
+  }
 
   renderCruxNodes = () => {
     return this.props.crux.map(({ coords }, index) => {
@@ -153,7 +161,8 @@ class Route extends Component {
   handleClick = (e) => {
     this.setState({ toolBox: <ToolBox
                                 coordinates={{ x:e.nativeEvent.offsetX, y:e.nativeEvent.offsetY }}
-                                handleClick={this.handleToolBoxClick} /> });
+                                handleClick={this.handleToolBoxClick}
+                                handleCloseClick={this.closeToolBox} /> });
   }
 
   handleToolBoxClick = (type, xCoord, yCoord) => {
@@ -161,6 +170,8 @@ class Route extends Component {
     this.props.addNode(type, x, y, this.props.name);
     this.setState({ toolBox: null });
   }
+
+  closeToolBox = () => this.setState({ toolBox: null });
 
   render() {
     return (
@@ -191,10 +202,11 @@ function ToolBox(props) {
 
   return (
     <div className='tool-box' style={{ left:toPx(x), top:toPx(y) }}>
-      <button onClick={handleClick} value={'rightFoot'}>Right Foot</button>
-      <button onClick={handleClick} value={'leftFoot'}>Left Foot</button>
-      <button onClick={handleClick} value={'rightHand'}>Right Hand</button>
-      <button onClick={handleClick} value={'leftHand'}>Left Hand</button>
+      <button className='tool-box' onClick={handleClick} value={'rightFoot'}>Right Foot</button>
+      <button className='tool-box' onClick={handleClick} value={'leftFoot'}>Left Foot</button>
+      <button className='tool-box' onClick={handleClick} value={'rightHand'}>Right Hand</button>
+      <button className='tool-box' onClick={handleClick} value={'leftHand'}>Left Hand</button>
+      <button className='tool-box' onClick={() => props.handleCloseClick()}>Exit</button>
     </div>
   )
 }

@@ -39,10 +39,14 @@ span.touch-node {
   padding-left: 50%;
 }
 
-.tool-box {
+div.tool-box {
   position: absolute;
-  width: 15%;
+  width: 20%;
   border-style: solid;
+}
+
+button.tool-box {
+  width: 100%;
 }
 
 .image-zoom {
