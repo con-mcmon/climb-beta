@@ -10,7 +10,7 @@ class App extends Component {
     this.state = {
       route: routes.churningInTheWake,
       crux: null,
-      nodes: [],
+      nodes: [{"id":0,"type":"rightFoot","x":80.81705150976904,"y":5.725699067909445,"parent":"main"}],
       coordinates: {
         x: 0,
         y: 0
@@ -71,6 +71,7 @@ class App extends Component {
               handleCloseClick={this.handleCruxCloseClick}
               handleMouseMove={this.handleTouchNodeMove}
               addNode={this.addNode}
+              deleteNode={this.deleteNode}
               touchNodes={this.state.nodes} />
   }
 
@@ -79,8 +80,12 @@ class App extends Component {
   handleCruxCloseClick = () => this.setState({ crux: null });
 
   addNode = (type, x, y, parent) => {
-    this.setState((state) => ({ nodes: [...state.nodes, { id: state.nodes.length, type: type, x: x, y: y, parent: parent }] }));
+    const ids = this.state.nodes.map(({ id }) => id);
+    const id = this.state.nodes.length > 0 ? Math.max(...ids) + 1 : 0;
+    this.setState((state) => ({ nodes: [...state.nodes, { id: id, type: type, x: x, y: y, parent: parent }] }));
   }
+
+  deleteNode = (id) => this.setState((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }));
 
   render() {
     const { x, y } = this.state.coordinates;
@@ -148,8 +153,11 @@ class Route extends Component {
                   type={type}
                   coordinates={{ x:coords.x, y:coords.y }}
                   containerDimensions={{ x: this.state.imageDimensions.x, y: this.state.imageDimensions.y}}
-                  handleMouseMove={this.handleMouseMove} /> })
+                  handleMouseMove={this.handleMouseMove}
+                  handleDeleteClick={this.deleteTouchNode} /> })
     }
+
+  deleteTouchNode = (id) => this.props.deleteNode(id);
 
   handleImageLoad = (e) => this.setState({ imageDimensions: { x:  e.target.width, y: e.target.height } });
 

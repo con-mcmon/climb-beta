@@ -33,10 +33,17 @@ img.touch-node {
   pointer-events: none;
 }
 
-span.touch-node {
+div.touch-node-details {
   position: absolute;
+  text-align: center;
+}
+
+span.touch-node {
   font-weight: bold;
-  padding-left: 50%;
+  cursor: default;
+}
+
+button.touch-node {
 }
 
 div.tool-box {
