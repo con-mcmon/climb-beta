@@ -21,25 +21,29 @@ img.route {
 }
 
 div.touch-node {
-  border-style: solid;
   width: 3%;
+  padding-top: 3%;
+  border-radius: 50%;
+  background-color: #00ffd5;
   position: absolute;
   text-align: center;
   cursor: pointer;
 }
 
-img.touch-node {
-  width: 100%;
-  pointer-events: none;
-}
-
 div.touch-node-details {
+  border-style: solid;
+  width: 400%;
+  padding: 200%;
+  top: -100%;
+  left: -350%;
   position: absolute;
   text-align: center;
 }
 
 span.touch-node {
   font-weight: bold;
+  font-size: 100%;
+  background-color: #00ffd5;
   cursor: default;
 }
 

@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import { toPx } from './helpers';
 import blackCircle from './content/images/circle-black.png';
 import redCircle from './content/images/circle-red.png';
-import blueCircle from './content/images/circle-blue.png';
 
 function TouchNode(props) {
   const [hovered, setHovered] = useState(false);
@@ -49,7 +48,7 @@ function TouchNode(props) {
   const renderDetails = () => {
     return (
       <div className='touch-node-details'>
-        <span className='touch-node'>{props.type}</span>
+        <span className='touch-node'>{`${props.id}:${props.type}`}</span>
         <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
       </div>
       )
@@ -65,10 +64,6 @@ function TouchNode(props) {
       onMouseUp={() => setMouseDown(false)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={handleMouseLeave} >
-      <img
-        src={blueCircle}
-        className='touch-node'
-        alt='touch node' />
       {hovered ? renderDetails() : null}
     </div>
     )

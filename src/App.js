@@ -85,7 +85,14 @@ class App extends Component {
     this.setState((state) => ({ nodes: [...state.nodes, { id: id, type: type, x: x, y: y, parent: parent }] }));
   }
 
-  deleteNode = (id) => this.setState((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }));
+  deleteNode = (id) => {
+    this.setState((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }));
+    this.shiftNodeIDs(id);
+  }
+
+  shiftNodeIDs = (deletedID) => {
+    this.setState((state) => ({ nodes: state.nodes.map((node) => node.id > deletedID ? {...node, id: node.id - 1} : node) }));
+  }
 
   render() {
     const { x, y } = this.state.coordinates;
@@ -210,10 +217,10 @@ function ToolBox(props) {
 
   return (
     <div className='tool-box' style={{ left:toPx(x), top:toPx(y) }}>
-      <button className='tool-box' onClick={handleClick} value={'rightFoot'}>Right Foot</button>
-      <button className='tool-box' onClick={handleClick} value={'leftFoot'}>Left Foot</button>
-      <button className='tool-box' onClick={handleClick} value={'rightHand'}>Right Hand</button>
-      <button className='tool-box' onClick={handleClick} value={'leftHand'}>Left Hand</button>
+      <button className='tool-box' onClick={handleClick} value={'RF'}>Right Foot</button>
+      <button className='tool-box' onClick={handleClick} value={'LF'}>Left Foot</button>
+      <button className='tool-box' onClick={handleClick} value={'RH'}>Right Hand</button>
+      <button className='tool-box' onClick={handleClick} value={'LH'}>Left Hand</button>
       <button className='tool-box' onClick={() => props.handleCloseClick()}>Exit</button>
     </div>
   )
