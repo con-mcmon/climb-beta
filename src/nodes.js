@@ -7,15 +7,31 @@ import blueCircle from './content/images/circle-blue.png';
 function TouchNode(props) {
   const [hovered, setHovered] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
-  const [center, setCenter] = useState({ x: 0, y: 0 });
+
+  const [divSize, setDivSize] = useState({ x: 0, y: 0 });
   const div = useRef();
 
+  const updateDivSize = () => {
+    if (div.current) {
+      setDivSize({
+        x: div.current.offsetWidth,
+        y: div.current.offsetHeight
+        })
+      }
+    }
+  useEffect(() => updateDivSize(), []);
+  useEffect(() => {
+    window.addEventListener('resize', updateDivSize);
+    return () => window.removeEventListener('resize', updateDivSize);
+  })
+
+  const [center, setCenter] = useState({ x: 0, y: 0 });
   useEffect(() => {
     setCenter({
-        x: props.coordinates.x - (div.current.offsetWidth / 2),
-        y: props.coordinates.y - (div.current.offsetHeight / 2)
-      })
-  }, [props.coordinates])
+        x: props.coordinates.x - (divSize.x / 2),
+        y: props.coordinates.y - (divSize.y / 2)
+      });
+  }, [props.coordinates, divSize])
 
   const handleMouseLeave = () => {
     setMouseDown(false);
