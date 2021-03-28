@@ -184,7 +184,7 @@ class Route extends Component {
   render() {
     return (
       <div className='route-container' >
-        <div className='route' style={this.props.style} onDragEnd={this.handleDragEnd} >
+        <div className='route' style={this.props.style} >
           <img
             className='route'
             ref={this.image}
