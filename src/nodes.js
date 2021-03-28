@@ -7,10 +7,13 @@ import blueCircle from './content/images/circle-blue.png';
 function TouchNode(props) {
   const [hovered, setHovered] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
+  const handleMouseLeave = () => {
+    setMouseDown(false);
+    setHovered(false);
+  }
 
   const [divSize, setDivSize] = useState({ x: 0, y: 0 });
   const div = useRef();
-
   const updateDivSize = () => {
     if (div.current) {
       setDivSize({
@@ -33,17 +36,12 @@ function TouchNode(props) {
       });
   }, [props.coordinates, divSize])
 
-  const handleMouseLeave = () => {
-    setMouseDown(false);
-    setHovered(false);
-  }
-
   const handleMouseMove = (event) => {
     if (mouseDown) {
-      const [x, y] = [props.coordinates.x + event.movementX, props.coordinates.y + event.movementY];
-      const insideContainer = (x > 0 && x < props.containerDimensions.x) && (y > 0 && y < props.containerDimensions.y);
+      const [newX, newY] = [props.coordinates.x + event.movementX, props.coordinates.y + event.movementY];
+      const insideContainer = (newX > 0 && newX < props.containerDimensions.x) && (newY > 0 && newY < props.containerDimensions.y);
       if (insideContainer) {
-        props.handleMouseMove(props.id, x, y)
+        props.handleMouseMove(props.id, newX, newY)
       }
     }
   }
