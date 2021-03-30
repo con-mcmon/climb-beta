@@ -1,18 +1,52 @@
 .App {
   text-align: center;
   justify-content: center;
+
 }
 
 div.route-container {
   position: absolute;
   width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 div.route {
   position: relative;
   margin: auto;
+  /* margin-left: 10%;
+  margin-right: 5%; */
   width: 60%;
   border-style: solid;
+}
+
+div.dashboard {
+  width: 20%;
+  padding: 0;
+  overflow: auto;
+  border-style: solid;
+  margin-left: 0;
+  margin-right: 5%;
+  display: block;
+}
+
+div.touch-node-info {
+  height: 20%;
+  width: 100%;
+  border-bottom: 5px solid;
+
+  /* background-color: grey;
+  margin-top: 1%;
+  margin-bottom: 1%; */
+}
+
+p.touch-node-info {
+  margin: 0;
+}
+
+input.touch-node-info {
+  width: 90%;
+  margin: auto;
 }
 
 img.route {

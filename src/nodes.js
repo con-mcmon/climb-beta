@@ -3,12 +3,73 @@ import { toPx } from './helpers';
 import blackCircle from './content/images/circle-black.png';
 import redCircle from './content/images/circle-red.png';
 
+const styles = {
+  color: {
+    foot: '#00ffd5',
+    hand: '#ffff00'
+  },
+  opacity: {
+    hovered: '1.0',
+    notHovered: '0.3'
+  }
+}
+
+function TouchNodeDashboad(props) {
+  const renderNodes = () => props.nodes.map(({ id, note, type, parent }) => <TouchNodeDetail
+                                                                              id={id}
+                                                                              note={note}
+                                                                              type={type}
+                                                                              hovered={id === props.selectedNode}
+                                                                              handleMouseOver={props.handleMouseOver}
+                                                                              handleNoteChange={props.handleNoteChange}
+                                                                              handleDeleteClick={props.handleDeleteClick} />);
+  return (
+    <div className='dashboard' >
+      {renderNodes()}
+    </div>
+  )
+}
+
+function TouchNodeDetail(props) {
+  const [hovered, setHovered] = useState(false);
+  const handleMouseOver = (hovered) => {
+    setHovered(hovered);
+    props.handleMouseOver(props.id, hovered);
+  }
+
+  const handleNoteChange = (e) => {
+    props.handleNoteChange(props.id, e.target.value);
+  }
+
+  const style = () => {
+    if (hovered || props.hovered) {
+      return {
+        backgroundColor: props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand
+      }
+    }
+  }
+
+  return (
+    <div
+      className='touch-node-info'
+      onMouseEnter={() => handleMouseOver(true)}
+      onMouseLeave={() => handleMouseOver(false)}
+      style={style()} >
+      <p className='touch-node-info'>{props.id}</p>
+      <p className='touch-node-info'>{props.type}</p>
+      <label for='notes'>Notes</label>
+      <input className='touch-node-info' type='text' id='notes' value={props.note} onChange={handleNoteChange} />
+      <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
+    </div>
+  )
+}
+
 function TouchNode(props) {
   const [hovered, setHovered] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
-  const handleMouseLeave = () => {
-    setMouseDown(false);
-    setHovered(false);
+  const handleMouseOver = (hovered) => {
+    setHovered(hovered);
+    props.handleMouseOver(props.id, hovered);
   }
 
   const [divSize, setDivSize] = useState({ x: 0, y: 0 });
@@ -45,15 +106,10 @@ function TouchNode(props) {
     }
   }
 
-  const handleNoteChange = (e) => {
-    props.handleNoteChange(props.id, e.target.value);
-  }
-
   const renderDetails = () => {
     return (
       <div className='touch-node-details'>
         <span className='touch-node'>{`${props.id}:${props.type}`}</span>
-        <input type="text" value={props.note} onChange={handleNoteChange} />
         <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
       </div>
       )
@@ -64,10 +120,10 @@ function TouchNode(props) {
       left:toPx(center.x),
       top:toPx(center.y)
     };
-    const color = props.type.split('-')[0] === 'foot' ? '#00ffd5' : '#ffff00';
+    const color = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand;
     style.borderColor = color;
 
-    const opacity = (hovered || mouseDown || props.hovered) ? 1.0 : 0.5;
+    const opacity = (hovered || mouseDown || props.hovered) ? styles.opacity.hovered : styles.opacity.notHovered;
     style.opacity = opacity;
     return style
   }
@@ -80,8 +136,8 @@ function TouchNode(props) {
       onMouseMove={handleMouseMove}
       onMouseDown={() => setMouseDown(true)}
       onMouseUp={() => setMouseDown(false)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={handleMouseLeave} >
+      onMouseEnter={() => handleMouseOver(true)}
+      onMouseLeave={() => handleMouseOver(false)} >
       {mouseDown ? <div className='touch-node-bubble'></div> : null}
       {hovered ? renderDetails() : null}
     </div>
@@ -103,4 +159,4 @@ function CruxNode(props) {
     )
   }
 
-export { TouchNode, CruxNode };
+export { TouchNodeDashboad, TouchNode, CruxNode };
