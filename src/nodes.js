@@ -45,25 +45,41 @@ function TouchNode(props) {
     }
   }
 
+  const handleNoteChange = (e) => {
+    props.handleNoteChange(props.id, e.target.value);
+  }
+
   const renderDetails = () => {
     return (
       <div className='touch-node-details'>
         <span className='touch-node'>{`${props.id}:${props.type}`}</span>
+        <input type="text" value={props.note} onChange={handleNoteChange} />
         <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
       </div>
       )
+  }
+
+  const style = () => {
+    let style = {
+      left:toPx(center.x),
+      top:toPx(center.y)
+    };
+    const color = props.type.split('-')[0] === 'foot' ? '#00ffd5' : '#ffff00';
+    style['borderColor'] = color;
+    return style
   }
 
   return (
     <div
       ref={div}
       className='touch-node'
-      style={{ left:toPx(center.x), top:toPx(center.y) }}
+      style={style()}
       onMouseMove={handleMouseMove}
       onMouseDown={() => setMouseDown(true)}
       onMouseUp={() => setMouseDown(false)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={handleMouseLeave} >
+      {mouseDown ? <div className='touch-node-bubble'></div> : null}
       {hovered ? renderDetails() : null}
     </div>
     )

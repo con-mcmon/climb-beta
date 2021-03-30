@@ -40,10 +40,6 @@ class App extends Component {
       }});
     }
 
-  handleTouchNodeMove = (nodeID, x, y) => {
-    this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, x: x, y: y} : node) }))
-  }
-
   renderRoute = (parent) => {
     let params = {};
     if (parent) {
@@ -72,17 +68,19 @@ class App extends Component {
               handleMouseMove={this.handleTouchNodeMove}
               addNode={this.addNode}
               deleteNode={this.deleteNode}
-              touchNodes={this.state.nodes} />
+              touchNodes={this.state.nodes}
+              handleTouchNodeNote={this.handleTouchNodeNote} />
   }
 
   handleCruxNodeClick = (name) => this.setState({ crux: name });
 
   handleCruxCloseClick = () => this.setState({ crux: null });
 
+  //TouchNode
   addNode = (type, x, y, parent) => {
     const ids = this.state.nodes.map(({ id }) => id);
     const id = this.state.nodes.length > 0 ? Math.max(...ids) + 1 : 0;
-    this.setState((state) => ({ nodes: [...state.nodes, { id: id, type: type, x: x, y: y, parent: parent }] }));
+    this.setState((state) => ({ nodes: [...state.nodes, { id: id, type: type, x: x, y: y, parent: parent, note: '' }] }));
   }
 
   deleteNode = (id) => {
@@ -92,6 +90,15 @@ class App extends Component {
 
   shiftNodeIDs = (deletedID) => {
     this.setState((state) => ({ nodes: state.nodes.map((node) => node.id > deletedID ? {...node, id: node.id - 1} : node) }));
+  }
+
+  handleTouchNodeMove = (nodeID, x, y) => {
+    this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, x: x, y: y} : node) }))
+  }
+
+  handleTouchNodeNote = (nodeID, value) => {
+    console.log(value)
+    this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, note: value } : node) }))
   }
 
   render() {
@@ -149,19 +156,22 @@ class Route extends Component {
               })
             }
 
+  //TouchNode
   renderTouchNodes = () => {
     return this.props.touchNodes
       .filter(({ parent }) => parent === this.props.name)
-      .map(({ id, type, x, y }) => {
+      .map(({ id, type, x, y, note }) => {
         const coords = percentToPx(x, y, this.state.imageDimensions.x, this.state.imageDimensions.y);
         return <TouchNode
                   key={id}
                   id={id}
                   type={type}
                   coordinates={{ x:coords.x, y:coords.y }}
+                  note={note}
                   containerDimensions={{ x: this.state.imageDimensions.x, y: this.state.imageDimensions.y}}
                   handleMouseMove={this.handleMouseMove}
-                  handleDeleteClick={this.deleteTouchNode} /> })
+                  handleDeleteClick={this.deleteTouchNode}
+                  handleNoteChange={this.handleTouchNodeNote} /> })
     }
 
   deleteTouchNode = (id) => this.props.deleteNode(id);
@@ -173,6 +183,11 @@ class Route extends Component {
     this.props.handleMouseMove(id, x, y);
   }
 
+  handleTouchNodeNote = (id, value) => {
+    this.props.handleTouchNodeNote(id, value);
+  }
+
+  //ToolBox
   handleClick = (e) => {
     this.setState({ toolBox: <ToolBox
                                 coordinates={{ x:e.nativeEvent.offsetX, y:e.nativeEvent.offsetY }}
@@ -213,14 +228,16 @@ class Route extends Component {
 
 function ToolBox(props) {
   const { x, y } = props.coordinates;
-  const handleClick = (e) => props.handleClick(e.target.value, x, y);
+  const handleClick = (e) => {
+    props.handleClick(e.target.value, x, y);
+  }
 
   return (
     <div className='tool-box' style={{ left:toPx(x), top:toPx(y) }}>
-      <button className='tool-box' onClick={handleClick} value={'RF'}>Right Foot</button>
-      <button className='tool-box' onClick={handleClick} value={'LF'}>Left Foot</button>
-      <button className='tool-box' onClick={handleClick} value={'RH'}>Right Hand</button>
-      <button className='tool-box' onClick={handleClick} value={'LH'}>Left Hand</button>
+      <button className='tool-box' onClick={handleClick} value={'foot-right'}>Right Foot</button>
+      <button className='tool-box' onClick={handleClick} value={'foot-left'}>Left Foot</button>
+      <button className='tool-box' onClick={handleClick} value={'hand-right'}>Right Hand</button>
+      <button className='tool-box' onClick={handleClick} value={'hand-left'}>Left Hand</button>
       <button className='tool-box' onClick={() => props.handleCloseClick()}>Exit</button>
     </div>
   )

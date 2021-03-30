@@ -21,29 +21,36 @@ img.route {
 }
 
 div.touch-node {
-  width: 3%;
-  padding-top: 3%;
+  width: 2.5%;
+  padding-top: 2.5%;
+  border-style: solid;
+  border-width: thick;
   border-radius: 50%;
-  background-color: #00ffd5;
   position: absolute;
   text-align: center;
   cursor: pointer;
 }
 
-div.touch-node-details {
-  border-style: solid;
-  width: 400%;
-  padding: 200%;
-  top: -100%;
-  left: -350%;
+div.touch-node-bubble {
+  border-radius: 50%;
+  width: 1000%;
+  padding-top: 1000%;
+  left: -450%;
+  top: -450%;
   position: absolute;
   text-align: center;
+}
+
+div.touch-node-details {
+  position: absolute;
+  text-align: center;
+  left: -90%;
+  top: 125%;
 }
 
 span.touch-node {
   font-weight: bold;
   font-size: 100%;
-  background-color: #00ffd5;
   cursor: default;
 }
 
