@@ -65,7 +65,10 @@ function TouchNode(props) {
       top:toPx(center.y)
     };
     const color = props.type.split('-')[0] === 'foot' ? '#00ffd5' : '#ffff00';
-    style['borderColor'] = color;
+    style.borderColor = color;
+
+    const opacity = (hovered || mouseDown || props.hovered) ? 1.0 : 0.5;
+    style.opacity = opacity;
     return style
   }
 
