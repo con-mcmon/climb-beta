@@ -55,11 +55,16 @@ function TouchNodeDetail(props) {
       onMouseEnter={() => handleMouseOver(true)}
       onMouseLeave={() => handleMouseOver(false)}
       style={style()} >
-      <p className='touch-node-info'>{props.id}</p>
+      <img
+        className='touch-node-info'
+        //get close button icon
+        src={redCircle}
+        alt='exit'
+        onClick={() => props.handleDeleteClick(props.id)} />
+      <p className='touch-node-info id'>{props.id}</p>
       <p className='touch-node-info'>{props.type}</p>
       <label for='notes'>Notes</label>
       <input className='touch-node-info' type='text' id='notes' value={props.note} onChange={handleNoteChange} />
-      <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
     </div>
   )
 }

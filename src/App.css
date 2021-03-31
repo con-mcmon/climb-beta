@@ -31,7 +31,8 @@ div.dashboard {
 }
 
 div.touch-node-info {
-  height: 20%;
+  position: relative;
+  height: 12%;
   width: 100%;
   border-bottom: 5px solid;
 
@@ -42,11 +43,25 @@ div.touch-node-info {
 
 p.touch-node-info {
   margin: 0;
+  font-weight: bold;
+}
+
+p.id {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 input.touch-node-info {
   width: 90%;
   margin: auto;
+}
+
+img.touch-node-info {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
 }
 
 img.route {
