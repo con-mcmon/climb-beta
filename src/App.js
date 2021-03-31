@@ -97,7 +97,6 @@ class App extends Component {
   }
 
   handleTouchNodeNote = (nodeID, value) => {
-    console.log(value)
     this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, note: value } : node) }))
   }
 
@@ -228,7 +227,8 @@ class Route extends Component {
           selectedNode={this.state.touchNode}
           handleMouseOver={this.handleTouchNodeMouseOver}
           handleNoteChange={this.handleTouchNodeNote}
-          handleDeleteClick={this.deleteTouchNode} />
+          handleDeleteClick={this.deleteTouchNode}
+          addNode={this.props.addNode} />
       </div>
       )
     }
