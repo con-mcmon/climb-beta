@@ -1,7 +1,6 @@
 .App {
   text-align: center;
   justify-content: center;
-
 }
 
 div.route-container {
@@ -45,23 +44,26 @@ div.touch-node-card {
 }
 
 p.touch-node-card {
-  margin: 2%;
+  margin: 5%;
   font-weight: bold;
   pointer-events: none;
 }
 
 p.position {
   position: absolute;
-  top: 2%;
-  left: 2%;
+  font-size: 15px;
+  top: 1%;
+  left: 1%;
+  margin: 2%;
 }
 
 p.close {
   color: grey;
-  font-size: 12.5px;
+  font-size: 15px;
   position: absolute;
-  top: 2%;
-  right: 2%;
+  top: 1%;
+  right: 1%;
+  margin: 2%;
   cursor: pointer;
   pointer-events: auto;
 }

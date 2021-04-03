@@ -11,10 +11,6 @@ class App extends Component {
       route: routes.churningInTheWake,
       crux: null,
       nodes: [],
-      coordinates: {
-        x: 0,
-        y: 0
-      }
     }
   }
 
@@ -31,14 +27,6 @@ class App extends Component {
       this.setState({ crux: null });
     }
   }
-
-  handleMouseMove = (e) => {
-    this.setState({
-      coordinates: {
-        x: e.clientX,
-        y: e.clientY
-      }});
-    }
 
   renderRoute = (parent) => {
     let params = {};
@@ -139,10 +127,9 @@ class App extends Component {
     }
 
   render() {
-    const { x, y } = this.state.coordinates;
     return (
-      <div className="App" onMouseMove={this.handleMouseMove} >
-        <h1>{ x } { y }</h1>
+      <div className='App' >
+        <h1>Beta Builder</h1>
         {this.renderRoute(true)}
         {this.state.crux !== null ? this.renderRoute(false) : null}
       </div>
