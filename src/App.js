@@ -1,7 +1,7 @@
 import { Component, createRef } from 'react';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
-import { TouchNode, CruxNode } from './nodes';
+import { TouchNodeDashboad, TouchNode, CruxNode } from './nodes';
 import routes from './content/routes';
 
 class App extends Component {
@@ -48,9 +48,11 @@ class App extends Component {
       params.image = route.image;
       params.alt = route.alt;
       params.crux= route.crux;
+      params.cruxOpen = this.state.crux;
       params.style = {};
     } else {
       const crux = this.state.route.crux[this.state.crux];
+      params.cruxOpen = null;
       params.name = this.state.crux;
       params.image = crux.image;
       params.alt = crux.alt;
@@ -65,11 +67,13 @@ class App extends Component {
               style={params.style}
               handleCruxNodeClick={this.handleCruxNodeClick}
               handleCloseClick={this.handleCruxCloseClick}
+              cruxOpen={params.cruxOpen}
               handleMouseMove={this.handleTouchNodeMove}
               addNode={this.addNode}
               deleteNode={this.deleteNode}
               touchNodes={this.state.nodes}
-              handleTouchNodeNote={this.handleTouchNodeNote} />
+              handleTouchNodeNote={this.handleTouchNodeNote}
+              swapTouchNodePositions={this.swapTouchNodePositions} />
   }
 
   handleCruxNodeClick = (name) => this.setState({ crux: name });
@@ -78,18 +82,32 @@ class App extends Component {
 
   //TouchNode
   addNode = (type, x, y, parent) => {
+    const newNode = { id: this.nextTouchNodeID(), type: type, x: x, y: y, parent: parent, note: '', position: this.nextTouchNodePosition(parent) };
+    this.setState((state) => ({ nodes: [...state.nodes, newNode] }));
+  }
+
+  nextTouchNodeID = () => {
+    //increment last id of all nodes
     const ids = this.state.nodes.map(({ id }) => id);
-    const id = this.state.nodes.length > 0 ? Math.max(...ids) + 1 : 0;
-    this.setState((state) => ({ nodes: [...state.nodes, { id: id, type: type, x: x, y: y, parent: parent, note: '' }] }));
+    return this.state.nodes.length > 0 ? Math.max(...ids) + 1 : 0;
   }
 
-  deleteNode = (id) => {
-    this.setState((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }));
-    this.shiftNodeIDs(id);
+  nextTouchNodePosition = (parent) => {
+    //increment last position of nodes in parent
+    const siblingPositions = this.state.nodes
+                              .filter((node) => node.parent === parent)
+                              .map(({ position }) => position);
+    return siblingPositions.length > 0 ? Math.max(...siblingPositions) + 1 : 0;
   }
 
-  shiftNodeIDs = (deletedID) => {
-    this.setState((state) => ({ nodes: state.nodes.map((node) => node.id > deletedID ? {...node, id: node.id - 1} : node) }));
+  deleteNode = (nodeID) => {
+    this.setState((state) => ({ nodes: state.nodes.filter(({ id }) => id !== nodeID) }));
+    this.shiftNodePositions(nodeID);
+  }
+
+  shiftNodePositions = (nodeID) => {
+    const position = this.state.nodes.find(({ id }) => id === nodeID).position;
+    this.setState((state) => ({ nodes: state.nodes.map((node) => node.position > position ? {...node, position: node.position - 1} : node) }));
   }
 
   handleTouchNodeMove = (nodeID, x, y) => {
@@ -97,9 +115,28 @@ class App extends Component {
   }
 
   handleTouchNodeNote = (nodeID, value) => {
-    console.log(value)
     this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, note: value } : node) }))
   }
+
+  swapTouchNodePositions = (nodeID, targetNodeID) => {
+    const currentPosition = this.state.nodes.find(({ id }) => id === nodeID).position;
+    const targetPosition = this.state.nodes.find(({ id }) => id === targetNodeID).position;
+
+    this.setState((prevState) => {
+      const nodes = prevState.nodes;
+      return {
+        nodes: nodes.map((node) => {
+          if (node.id === nodeID) {
+            return {...node, position: targetPosition}
+          }
+          if (node.id === targetNodeID) {
+            return {...node, position: currentPosition}
+          }
+          return node;
+          })
+        }
+      })
+    }
 
   render() {
     const { x, y } = this.state.coordinates;
@@ -123,6 +160,7 @@ class Route extends Component {
       },
       onImage: false,
       toolBox: null,
+      touchNode: null
     }
     this.image = createRef();
   }
@@ -157,21 +195,23 @@ class Route extends Component {
             }
 
   //TouchNode
+  childTouchNodes = () => this.props.touchNodes.filter(({ parent }) => parent === this.props.name);
+
   renderTouchNodes = () => {
-    return this.props.touchNodes
-      .filter(({ parent }) => parent === this.props.name)
-      .map(({ id, type, x, y, note }) => {
+    return this.childTouchNodes().map(({ id, type, x, y, note, position }) => {
         const coords = percentToPx(x, y, this.state.imageDimensions.x, this.state.imageDimensions.y);
         return <TouchNode
                   key={id}
                   id={id}
+                  position={position}
+                  hovered={this.state.touchNode === id}
                   type={type}
                   coordinates={{ x:coords.x, y:coords.y }}
                   note={note}
                   containerDimensions={{ x: this.state.imageDimensions.x, y: this.state.imageDimensions.y}}
                   handleMouseMove={this.handleMouseMove}
-                  handleDeleteClick={this.deleteTouchNode}
-                  handleNoteChange={this.handleTouchNodeNote} /> })
+                  handleMouseOver={this.handleTouchNodeMouseOver}
+                  handleDeleteClick={this.deleteTouchNode} /> })
     }
 
   deleteTouchNode = (id) => this.props.deleteNode(id);
@@ -183,9 +223,11 @@ class Route extends Component {
     this.props.handleMouseMove(id, x, y);
   }
 
-  handleTouchNodeNote = (id, value) => {
-    this.props.handleTouchNodeNote(id, value);
-  }
+  handleTouchNodeMouseOver = (id, hovered) => hovered ? this.setState({ touchNode: id }) : this.setState({ touchNode: null })
+
+  handleTouchNodeNote = (id, value) => this.props.handleTouchNodeNote(id, value);
+
+  swapTouchNodeID = (id, down) => this.props.swapTouchNodeID(id, down);
 
   //ToolBox
   handleClick = (e) => {
@@ -202,6 +244,22 @@ class Route extends Component {
   }
 
   closeToolBox = () => this.setState({ toolBox: null });
+
+  renderTouchNodeDashboard = () => {
+    if (this.props.cruxOpen === null) {
+      return (
+        <TouchNodeDashboad
+          nodes={this.childTouchNodes()}
+          selectedNode={this.state.touchNode}
+          handleMouseOver={this.handleTouchNodeMouseOver}
+          handleNoteChange={this.handleTouchNodeNote}
+          handleDeleteClick={this.deleteTouchNode}
+          addNode={this.props.addNode}
+          swapNodePositions={this.props.swapTouchNodePositions} />
+        )
+    }
+    return null;
+  }
 
   render() {
     return (
@@ -221,6 +279,7 @@ class Route extends Component {
           {this.state.toolBox}
           {!this.props.parent ? <button onClick={this.props.handleCloseClick}>Close</button> : null}
         </div>
+        {this.renderTouchNodeDashboard()}
       </div>
       )
     }

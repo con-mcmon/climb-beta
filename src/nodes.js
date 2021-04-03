@@ -3,12 +3,143 @@ import { toPx } from './helpers';
 import blackCircle from './content/images/circle-black.png';
 import redCircle from './content/images/circle-red.png';
 
+const styles = {
+  color: {
+    foot: '#00ffd5',
+    hand: '#ffff00'
+  },
+  opacity: {
+    hovered: '1.0',
+    notHovered: '0.3'
+  }
+}
+
+function TouchNodeDashboad(props) {
+  const [draggedCard, setDraggedCard] = useState(null);
+
+  const renderNodes = () => {
+    return props.nodes.map(({ id, position, note, type }) => {
+      return (
+        <TouchNodeCard
+          id={id}
+          position={position}
+          key={id}
+          note={note}
+          type={type}
+          hovered={id === props.selectedNode}
+          handleMouseOver={props.handleMouseOver}
+          handleNoteChange={props.handleNoteChange}
+          handleDeleteClick={props.handleDeleteClick}
+          setDraggedCard={(id) => setDraggedCard(id)}
+          handleDrop={(id) => props.swapNodePositions(draggedCard, id)} />
+          )
+        })
+      }
+
+  return (
+    <div className='dashboard' >
+      {renderNodes()}
+    </div>
+  )
+}
+
+function TouchNodeCard(props) {
+  const [hovered, setHovered] = useState(false);
+  const handleMouseOver = (hovered) => {
+    setHovered(hovered);
+    props.handleMouseOver(props.id, hovered);
+  }
+
+  const [dragging, setDragging] = useState(false);
+  const handleDragStart = () => {
+    setDragging(true);
+    props.setDraggedCard(props.id);
+  }
+  const handleDragEnd = () => {
+    setDragging(false);
+    props.setDraggedCard(null);
+  }
+
+  const [draggedOver, setDraggedOver] = useState(0);
+  const handleDragEnter = (e) => {
+    e.stopPropagation();
+    setDraggedOver(true);
+  }
+
+  const handleDragLeave = (e) => {
+    e.stopPropagation();
+    setDraggedOver(false);
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  const handleDrop = (e) => {
+    setDraggedOver(false);
+    props.handleDrop(props.id);
+  }
+
+  const handleNoteChange = (e) => {
+    props.handleNoteChange(props.id, e.target.value);
+  }
+
+  const containerStyle = () => {
+    let style = { order: props.position };
+    if (hovered || props.hovered) {
+      style.backgroundColor = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand
+    }
+    if (dragging) {
+      style.pointerEvents = 'none';
+    }
+    if (draggedOver) {
+      style.borderBottom = 'solid black';
+    }
+    return style;
+  }
+
+  const removePointerEvents = () => ({ pointerEvents: 'none' })
+
+  return (
+    <div
+      className='touch-node-card'
+      style={containerStyle()}
+      onMouseEnter={() => handleMouseOver(true)}
+      onMouseLeave={() => handleMouseOver(false)}
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop} >
+      <p
+        className='touch-node-card close'
+        style={draggedOver ? removePointerEvents() : null}
+        onClick={() => props.handleDeleteClick(props.id)} >
+        X
+      </p>
+      <p className='touch-node-card position'>{props.position}</p>
+      <p className='touch-node-card'>{props.type}</p>
+      <textarea
+        style={draggedOver ? removePointerEvents() : null}
+        className='touch-node-card'
+        rows={2}
+        type='text'
+        id='notes'
+        value={props.note}
+        onChange={handleNoteChange} />
+    </div>
+  )
+}
+
 function TouchNode(props) {
   const [hovered, setHovered] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
-  const handleMouseLeave = () => {
-    setMouseDown(false);
-    setHovered(false);
+  const handleMouseOver = (hovered) => {
+    setHovered(hovered);
+    props.handleMouseOver(props.id, hovered);
   }
 
   const [divSize, setDivSize] = useState({ x: 0, y: 0 });
@@ -45,15 +176,10 @@ function TouchNode(props) {
     }
   }
 
-  const handleNoteChange = (e) => {
-    props.handleNoteChange(props.id, e.target.value);
-  }
-
   const renderDetails = () => {
     return (
       <div className='touch-node-details'>
-        <span className='touch-node'>{`${props.id}:${props.type}`}</span>
-        <input type="text" value={props.note} onChange={handleNoteChange} />
+        <span className='touch-node'>{`${props.position}:${props.type}`}</span>
         <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
       </div>
       )
@@ -64,10 +190,10 @@ function TouchNode(props) {
       left:toPx(center.x),
       top:toPx(center.y)
     };
-    const color = props.type.split('-')[0] === 'foot' ? '#00ffd5' : '#ffff00';
+    const color = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand;
     style.borderColor = color;
 
-    const opacity = (hovered || mouseDown || props.hovered) ? 1.0 : 0.5;
+    const opacity = (hovered || mouseDown || props.hovered) ? styles.opacity.hovered : styles.opacity.notHovered;
     style.opacity = opacity;
     return style
   }
@@ -80,8 +206,8 @@ function TouchNode(props) {
       onMouseMove={handleMouseMove}
       onMouseDown={() => setMouseDown(true)}
       onMouseUp={() => setMouseDown(false)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={handleMouseLeave} >
+      onMouseEnter={() => handleMouseOver(true)}
+      onMouseLeave={() => handleMouseOver(false)} >
       {mouseDown ? <div className='touch-node-bubble'></div> : null}
       {hovered ? renderDetails() : null}
     </div>
@@ -103,4 +229,4 @@ function CruxNode(props) {
     )
   }
 
-export { TouchNode, CruxNode };
+export { TouchNodeDashboad, TouchNode, CruxNode };
