@@ -97,13 +97,14 @@ class App extends Component {
     return siblingPositions.length > 0 ? Math.max(...siblingPositions) + 1 : 0;
   }
 
-  deleteNode = (id) => {
-    this.setState((state) => ({ nodes: state.nodes.filter((node) => node.id !== id) }));
-    this.shiftNodeIDs(id);
+  deleteNode = (nodeID) => {
+    this.setState((state) => ({ nodes: state.nodes.filter(({ id }) => id !== nodeID) }));
+    this.shiftNodePositions(nodeID);
   }
 
-  shiftNodeIDs = (deletedID) => {
-    this.setState((state) => ({ nodes: state.nodes.map((node) => node.id > deletedID ? {...node, position: node.position - 1} : node) }));
+  shiftNodePositions = (nodeID) => {
+    const position = this.state.nodes.find(({ id }) => id === nodeID).position;
+    this.setState((state) => ({ nodes: state.nodes.map((node) => node.position > position ? {...node, position: node.position - 1} : node) }));
   }
 
   handleTouchNodeMove = (nodeID, x, y) => {
