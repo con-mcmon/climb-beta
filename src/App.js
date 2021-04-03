@@ -69,7 +69,8 @@ class App extends Component {
               addNode={this.addNode}
               deleteNode={this.deleteNode}
               touchNodes={this.state.nodes}
-              handleTouchNodeNote={this.handleTouchNodeNote} />
+              handleTouchNodeNote={this.handleTouchNodeNote}
+              swapTouchNodePositions={this.swapTouchNodePositions} />
   }
 
   handleCruxNodeClick = (name) => this.setState({ crux: name });
@@ -78,9 +79,22 @@ class App extends Component {
 
   //TouchNode
   addNode = (type, x, y, parent) => {
+    const newNode = { id: this.nextTouchNodeID(), type: type, x: x, y: y, parent: parent, note: '', position: this.nextTouchNodePosition(parent) };
+    this.setState((state) => ({ nodes: [...state.nodes, newNode] }));
+  }
+
+  nextTouchNodeID = () => {
+    //increment last id of all nodes
     const ids = this.state.nodes.map(({ id }) => id);
-    const id = this.state.nodes.length > 0 ? Math.max(...ids) + 1 : 0;
-    this.setState((state) => ({ nodes: [...state.nodes, { id: id, type: type, x: x, y: y, parent: parent, note: '' }] }));
+    return this.state.nodes.length > 0 ? Math.max(...ids) + 1 : 0;
+  }
+
+  nextTouchNodePosition = (parent) => {
+    //increment last position of nodes in parent
+    const siblingPositions = this.state.nodes
+                              .filter((node) => node.parent === parent)
+                              .map(({ position }) => position);
+    return siblingPositions.length > 0 ? Math.max(...siblingPositions) + 1 : 0;
   }
 
   deleteNode = (id) => {
@@ -89,7 +103,7 @@ class App extends Component {
   }
 
   shiftNodeIDs = (deletedID) => {
-    this.setState((state) => ({ nodes: state.nodes.map((node) => node.id > deletedID ? {...node, id: node.id - 1} : node) }));
+    this.setState((state) => ({ nodes: state.nodes.map((node) => node.id > deletedID ? {...node, position: node.position - 1} : node) }));
   }
 
   handleTouchNodeMove = (nodeID, x, y) => {
@@ -99,6 +113,26 @@ class App extends Component {
   handleTouchNodeNote = (nodeID, value) => {
     this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, note: value } : node) }))
   }
+
+  swapTouchNodePositions = (nodeID, targetNodeID) => {
+    const currentPosition = this.state.nodes.find(({ id }) => id === nodeID).position;
+    const targetPosition = this.state.nodes.find(({ id }) => id === targetNodeID).position;
+
+    this.setState((prevState) => {
+      const nodes = prevState.nodes;
+      return {
+        nodes: nodes.map((node) => {
+          if (node.id === nodeID) {
+            return {...node, position: targetPosition}
+          }
+          if (node.id === targetNodeID) {
+            return {...node, position: currentPosition}
+          }
+          return node;
+          })
+        }
+      })
+    }
 
   render() {
     const { x, y } = this.state.coordinates;
@@ -160,11 +194,12 @@ class Route extends Component {
   childTouchNodes = () => this.props.touchNodes.filter(({ parent }) => parent === this.props.name);
 
   renderTouchNodes = () => {
-    return this.childTouchNodes().map(({ id, type, x, y, note }) => {
+    return this.childTouchNodes().map(({ id, type, x, y, note, position }) => {
         const coords = percentToPx(x, y, this.state.imageDimensions.x, this.state.imageDimensions.y);
         return <TouchNode
                   key={id}
                   id={id}
+                  position={position}
                   hovered={this.state.touchNode === id}
                   type={type}
                   coordinates={{ x:coords.x, y:coords.y }}
@@ -187,6 +222,8 @@ class Route extends Component {
   handleTouchNodeMouseOver = (id, hovered) => hovered ? this.setState({ touchNode: id }) : this.setState({ touchNode: null })
 
   handleTouchNodeNote = (id, value) => this.props.handleTouchNodeNote(id, value);
+
+  swapTouchNodeID = (id, down) => this.props.swapTouchNodeID(id, down);
 
   //ToolBox
   handleClick = (e) => {
@@ -228,7 +265,8 @@ class Route extends Component {
           handleMouseOver={this.handleTouchNodeMouseOver}
           handleNoteChange={this.handleTouchNodeNote}
           handleDeleteClick={this.deleteTouchNode}
-          addNode={this.props.addNode} />
+          addNode={this.props.addNode}
+          swapNodePositions={this.props.swapTouchNodePositions} />
       </div>
       )
     }

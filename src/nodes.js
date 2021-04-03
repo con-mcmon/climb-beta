@@ -15,15 +15,27 @@ const styles = {
 }
 
 function TouchNodeDashboad(props) {
-  const renderNodes = () => props.nodes.map(({ id, note, type, parent }) => <TouchNodeDetail
-                                                                              id={id}
-                                                                              key={id}
-                                                                              note={note}
-                                                                              type={type}
-                                                                              hovered={id === props.selectedNode}
-                                                                              handleMouseOver={props.handleMouseOver}
-                                                                              handleNoteChange={props.handleNoteChange}
-                                                                              handleDeleteClick={props.handleDeleteClick} />);
+  const [draggedCard, setDraggedCard] = useState(null);
+
+  const renderNodes = () => {
+    return props.nodes.map(({ id, position, note, type }) => {
+      return (
+        <TouchNodeCard
+          id={id}
+          position={position}
+          key={id}
+          note={note}
+          type={type}
+          hovered={id === props.selectedNode}
+          handleMouseOver={props.handleMouseOver}
+          handleNoteChange={props.handleNoteChange}
+          handleDeleteClick={props.handleDeleteClick}
+          setDraggedCard={(id) => setDraggedCard(id)}
+          handleDrop={(id) => props.swapNodePositions(draggedCard, id)} />
+          )
+        })
+      }
+
   return (
     <div className='dashboard' >
       {renderNodes()}
@@ -31,36 +43,92 @@ function TouchNodeDashboad(props) {
   )
 }
 
-function TouchNodeDetail(props) {
+function TouchNodeCard(props) {
   const [hovered, setHovered] = useState(false);
   const handleMouseOver = (hovered) => {
     setHovered(hovered);
     props.handleMouseOver(props.id, hovered);
   }
 
+  const [dragging, setDragging] = useState(false);
+  const handleDragStart = () => {
+    setDragging(true);
+    props.setDraggedCard(props.id);
+  }
+  const handleDragEnd = () => {
+    setDragging(false);
+    props.setDraggedCard(null);
+  }
+
+  const [draggedOver, setDraggedOver] = useState(0);
+  const handleDragEnter = (e) => {
+    e.stopPropagation();
+    setDraggedOver(true);
+  }
+
+  const handleDragLeave = (e) => {
+    e.stopPropagation();
+    setDraggedOver(false);
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  const handleDrop = (e) => {
+    setDraggedOver(false);
+    props.handleDrop(props.id);
+  }
+
   const handleNoteChange = (e) => {
     props.handleNoteChange(props.id, e.target.value);
   }
 
-  const style = () => {
+  const containerStyle = () => {
+    let style = { order: props.position };
     if (hovered || props.hovered) {
-      return {
-        backgroundColor: props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand
-      }
+      style.backgroundColor = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand
     }
+    if (dragging) {
+      style.pointerEvents = 'none';
+    }
+    if (draggedOver) {
+      style.borderBottom = 'solid red';
+    }
+    return style;
   }
+
+  const removePointerEvents = () => ({ pointerEvents: 'none' })
 
   return (
     <div
-      className='touch-node-info'
+      className='touch-node-card'
+      style={containerStyle()}
       onMouseEnter={() => handleMouseOver(true)}
       onMouseLeave={() => handleMouseOver(false)}
-      style={style()} >
-      <p className='touch-node-info close' onClick={() => props.handleDeleteClick(props.id)} >X</p>
-      <p className='touch-node-info id'>{props.id}</p>
-      <p className='touch-node-info'>{props.type}</p>
-      <label>Notes</label>
-      <input className='touch-node-info' type='text' id='notes' value={props.note} onChange={handleNoteChange} />
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop} >
+      <p
+        className='touch-node-card close'
+        style={draggedOver ? removePointerEvents() : null}
+        onClick={() => props.handleDeleteClick(props.id)} >
+        X
+      </p>
+      <p className='touch-node-card id'>{props.position}</p>
+      <p className='touch-node-card'>{props.type}</p>
+      <input
+        style={draggedOver ? removePointerEvents() : null}
+        className='touch-node-card'
+        type='text'
+        id='notes'
+        value={props.note}
+        onChange={handleNoteChange} />
     </div>
   )
 }
@@ -110,7 +178,7 @@ function TouchNode(props) {
   const renderDetails = () => {
     return (
       <div className='touch-node-details'>
-        <span className='touch-node'>{`${props.id}:${props.type}`}</span>
+        <span className='touch-node'>{`${props.position}:${props.type}`}</span>
         <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
       </div>
       )
