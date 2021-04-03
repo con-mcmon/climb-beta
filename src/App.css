@@ -112,9 +112,6 @@ span.touch-node {
   cursor: default;
 }
 
-button.touch-node {
-}
-
 div.tool-box {
   position: absolute;
   width: 20%;
@@ -125,19 +122,8 @@ button.tool-box {
   width: 100%;
 }
 
-.image-zoom {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  border-style: solid;
-}
-
 img.crux-node {
   position: absolute;
   width: 5%;
   cursor: pointer;
-}
-
-img.crux-node:hover {
-
 }
