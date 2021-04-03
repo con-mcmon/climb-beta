@@ -94,7 +94,7 @@ function TouchNodeCard(props) {
       style.pointerEvents = 'none';
     }
     if (draggedOver) {
-      style.borderBottom = 'solid black';
+      style.borderBottom = 'thick solid black';
     }
     return style;
   }

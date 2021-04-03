@@ -7,8 +7,6 @@
 div.route-container {
   position: absolute;
   width: 100%;
-  display: flex;
-  flex-direction: row;
 }
 
 div.route {

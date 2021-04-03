@@ -56,7 +56,7 @@ class App extends Component {
       params.name = this.state.crux;
       params.image = crux.image;
       params.alt = crux.alt;
-      params.style = { width: '40%', marginTop: '10%' };
+      params.style = { width: '40%', marginTop: '5%' };
     }
     return <Route
               parent={parent}
