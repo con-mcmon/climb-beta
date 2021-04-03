@@ -94,7 +94,7 @@ function TouchNodeCard(props) {
       style.pointerEvents = 'none';
     }
     if (draggedOver) {
-      style.borderBottom = 'solid red';
+      style.borderBottom = 'solid black';
     }
     return style;
   }
@@ -122,9 +122,10 @@ function TouchNodeCard(props) {
       </p>
       <p className='touch-node-card id'>{props.position}</p>
       <p className='touch-node-card'>{props.type}</p>
-      <input
+      <textarea
         style={draggedOver ? removePointerEvents() : null}
         className='touch-node-card'
+        rows={2}
         type='text'
         id='notes'
         value={props.note}
