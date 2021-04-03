@@ -48,9 +48,11 @@ class App extends Component {
       params.image = route.image;
       params.alt = route.alt;
       params.crux= route.crux;
+      params.cruxOpen = this.state.crux;
       params.style = {};
     } else {
       const crux = this.state.route.crux[this.state.crux];
+      params.cruxOpen = null;
       params.name = this.state.crux;
       params.image = crux.image;
       params.alt = crux.alt;
@@ -65,6 +67,7 @@ class App extends Component {
               style={params.style}
               handleCruxNodeClick={this.handleCruxNodeClick}
               handleCloseClick={this.handleCruxCloseClick}
+              cruxOpen={params.cruxOpen}
               handleMouseMove={this.handleTouchNodeMove}
               addNode={this.addNode}
               deleteNode={this.deleteNode}
@@ -242,7 +245,24 @@ class Route extends Component {
 
   closeToolBox = () => this.setState({ toolBox: null });
 
+  renderTouchNodeDashboard = () => {
+    if (this.props.cruxOpen === null) {
+      return (
+        <TouchNodeDashboad
+          nodes={this.childTouchNodes()}
+          selectedNode={this.state.touchNode}
+          handleMouseOver={this.handleTouchNodeMouseOver}
+          handleNoteChange={this.handleTouchNodeNote}
+          handleDeleteClick={this.deleteTouchNode}
+          addNode={this.props.addNode}
+          swapNodePositions={this.props.swapTouchNodePositions} />
+        )
+    }
+    return null;
+  }
+
   render() {
+    console.log(this.props.cruxOpen)
     return (
       <div className='route-container' >
         <div className='route' style={this.props.style} >
@@ -260,14 +280,7 @@ class Route extends Component {
           {this.state.toolBox}
           {!this.props.parent ? <button onClick={this.props.handleCloseClick}>Close</button> : null}
         </div>
-        <TouchNodeDashboad
-          nodes={this.childTouchNodes()}
-          selectedNode={this.state.touchNode}
-          handleMouseOver={this.handleTouchNodeMouseOver}
-          handleNoteChange={this.handleTouchNodeNote}
-          handleDeleteClick={this.deleteTouchNode}
-          addNode={this.props.addNode}
-          swapNodePositions={this.props.swapTouchNodePositions} />
+        {this.renderTouchNodeDashboard()}
       </div>
       )
     }
