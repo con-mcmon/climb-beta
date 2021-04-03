@@ -81,6 +81,25 @@ function TouchNodeCard(props) {
     props.handleDrop(props.id);
   }
 
+  const [closeClickCount, setCloseClickCount] = useState(0);
+  const handleCloseClick = () => {
+    setCloseClickCount(1);
+    if (closeClickCount === 1) {
+      props.handleDeleteClick(props.id);
+    }
+  }
+
+  useEffect(() => {
+    let timeoutID;
+    if (closeClickCount === 1) {
+      timeoutID = setTimeout(() => setCloseClickCount(0), 1000);
+    }
+    return () => {
+      clearTimeout(timeoutID);
+    };
+  }, [closeClickCount]);
+
+
   const handleNoteChange = (e) => {
     props.handleNoteChange(props.id, e.target.value);
   }
@@ -101,6 +120,17 @@ function TouchNodeCard(props) {
 
   const removePointerEvents = () => ({ pointerEvents: 'none' })
 
+  const closeStyle = () => {
+    let style = {};
+    if (draggedOver) {
+      style.pointerEvents = 'none';
+    }
+    if (closeClickCount === 1) {
+      style.color = 'red';
+    }
+    return style;
+  }
+
   return (
     <div
       className='touch-node-card'
@@ -116,8 +146,8 @@ function TouchNodeCard(props) {
       onDrop={handleDrop} >
       <p
         className='touch-node-card close'
-        style={draggedOver ? removePointerEvents() : null}
-        onClick={() => props.handleDeleteClick(props.id)} >
+        style={closeStyle()}
+        onClick={handleCloseClick} >
         X
       </p>
       <p className='touch-node-card position'>{props.position}</p>
