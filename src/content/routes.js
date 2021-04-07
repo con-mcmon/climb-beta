@@ -12,7 +12,7 @@ const routes = {
       alt: 'churning in the wake crux'
     },
     {
-      coords: {x:75, y:90},
+      coords: {x:50, y:50},
       image: churningInTheWakeCrux,
       alt: 'churning in the wake crux'
     },

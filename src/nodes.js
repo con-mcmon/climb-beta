@@ -109,9 +109,6 @@ function TouchNodeCard(props) {
     if (hovered || props.hovered) {
       style.backgroundColor = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand
     }
-    if (dragging) {
-      style.pointerEvents = 'none';
-    }
     if (draggedOver) {
       style.borderBottom = 'thick solid black';
     }
