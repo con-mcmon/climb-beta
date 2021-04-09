@@ -122,8 +122,9 @@ button.tool-box {
   width: 100%;
 }
 
-img.crux-node {
+span.crux-node {
+  font-size: 150%;
+  font-weight: bolder;
   position: absolute;
-  width: 5%;
   cursor: pointer;
 }

@@ -1,4 +1,5 @@
 import { Component, createRef } from 'react';
+import axios from 'axios';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
 import { TouchNodeDashboad, TouchNode, CruxNode } from './nodes';
@@ -126,10 +127,21 @@ class App extends Component {
       })
     }
 
+  handleUploadRouteClick = () => {
+    axios.post('/routes', {
+      name: 'churning in the wake',
+      alt: this.state.route.alt,
+      nodes: this.state.nodes
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err))
+  }
+
   render() {
     return (
       <div className='App' >
         <h1>Beta Builder</h1>
+        <button onClick={this.handleUploadRouteClick}>Upload Route</button>
         {this.renderRoute(true)}
         {this.state.crux !== null ? this.renderRoute(false) : null}
       </div>

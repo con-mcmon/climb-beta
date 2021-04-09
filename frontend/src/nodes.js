@@ -219,9 +219,7 @@ function TouchNode(props) {
     };
     const color = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand;
     style.borderColor = color;
-
-    const opacity = (hovered || mouseDown || props.hovered) ? styles.opacity.hovered : styles.opacity.notHovered;
-    style.opacity = opacity;
+    style.opacity = (hovered || mouseDown || props.hovered) ? styles.opacity.hovered : styles.opacity.notHovered;
     return style
   }
 
@@ -243,16 +241,20 @@ function TouchNode(props) {
 
 function CruxNode(props) {
   const [hovered, setHovered] = useState(false);
-  const { x, y } = props.coordinates;
+  const style = () => {
+    let style = { left:toPx(props.coordinates.x), top:toPx(props.coordinates.y) };
+    style.opacity = hovered ? styles.opacity.hovered : styles.opacity.notHovered;
+    style.color = '#1500ff';
+    return style;
+  }
   return (
-    <img
-      src={hovered ? redCircle : blackCircle}
-      alt='crux node'
+    <span
       className='crux-node'
-      style={{ left:toPx(x), top:toPx(y) }}
+      style={style()}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => props.handleClick(props.id)} />
+      onClick={() => props.handleClick(props.id)}>
+      {`CRUX:${props.id + 1}`}</span>
     )
   }
 
