@@ -1,21 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Route, Crux, Node } = require('./models/route');
+const { Route } = require('../models/route');
 
 const invalidRouteMessage = { error: 'Invalid Route' };
-
-function buildNodes(nodes) {
-		return nodes.map(({ x, y, type, position, note, parent }) => {
-			return new Node({
-				x: x,
-				y: y,
-				type: type,
-				position: position,
-				note: note,
-				parent: parent
-				})
-			})
-		}
 
 router.get('/', async (req, res) => {
 	const routes = await Route.find();
@@ -26,8 +13,7 @@ router.post('/', async (req, res) => {
   try {
     const route = new Route({
   		name: req.body.name,
-      alt: req.body.alt,
-			nodes: buildNodes(req.body.nodes)
+      alt: req.body.alt
       })
 
     await route.save();
@@ -52,7 +38,7 @@ router.delete('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const route = await Route.findOne({ _id: req.params.id });
+		const route = await Route.findById(req.params.routeID);
     res.send(route);
   }
   catch {
@@ -63,7 +49,8 @@ router.get('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
 	try {
-		const route = await Route.findOne({ _id: req.params.id });
+		const route = await Route.findById(req.params.routeID);
+
     for (const key in req.body) {
       route[key] = req.body[key];
     }

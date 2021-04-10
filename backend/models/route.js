@@ -1,30 +1,31 @@
 const mongoose = require('mongoose');
 
-const NodeSchema = new mongoose.Schema({
-  x: Number,
-  y: Number,
+const HoldSchema = new mongoose.Schema({
+  coordinates: {
+    x: Number,
+    y: Number
+  },
   type: String,
   position: Number,
   note: String,
   parent: String
   })
 
+const BetaSchema = new mongoose.Schema({
+  holds: [HoldSchema]
+  });
+
 const CruxSchema = new mongoose.Schema({
   alt: String,
-  coordinates: {x: Number, y: Number },
+  coordinates: {x: Number, y: Number},
   });
 
 const RouteSchema = new mongoose.Schema({
   name: String,
-  alt: String,
-  nodes: [NodeSchema],
-  crux: [CruxSchema]
-});
+  crux: [CruxSchema],
+  beta: [BetaSchema]
+  });
 
 Route = mongoose.model('Route', RouteSchema);
-Crux = mongoose.model('Crux', CruxSchema);
-Node = mongoose.model('Node', NodeSchema);
 
 exports.Route = Route;
-exports.Crux = Crux;
-exports.Node = Node;
