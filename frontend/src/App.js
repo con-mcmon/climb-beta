@@ -71,7 +71,14 @@ class App extends Component {
 
   //TouchNode
   addNode = (type, x, y, parent) => {
-    const newNode = { id: this.nextTouchNodeID(), type: type, x: x, y: y, parent: parent, note: '', position: this.nextTouchNodePosition(parent) };
+    const newNode = {
+      id: this.nextTouchNodeID(),
+      type: type,
+      coordinates: {x: x, y: y},
+      parent: parent,
+      note: '',
+      position: this.nextTouchNodePosition(parent)
+    };
     this.setState((state) => ({ nodes: [...state.nodes, newNode] }));
   }
 
@@ -100,8 +107,10 @@ class App extends Component {
   }
 
   handleTouchNodeMove = (nodeID, x, y) => {
-    this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, x: x, y: y} : node) }))
-  }
+    this.setState((prevState) => ({
+      nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, coordinates: {x: x, y: y} } : node)
+      }))
+    }
 
   handleTouchNodeNote = (nodeID, value) => {
     this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, note: value } : node) }))
@@ -197,8 +206,8 @@ class Route extends Component {
   childTouchNodes = () => this.props.touchNodes.filter(({ parent }) => parent === this.props.name);
 
   renderTouchNodes = () => {
-    return this.childTouchNodes().map(({ id, type, x, y, note, position }) => {
-        const coords = percentToPx(x, y, this.state.imageDimensions.x, this.state.imageDimensions.y);
+    return this.childTouchNodes().map(({ id, type, coordinates, note, position }) => {
+        const coords = percentToPx(coordinates.x, coordinates.y, this.state.imageDimensions.x, this.state.imageDimensions.y);
         return <TouchNode
                   key={id}
                   id={id}
