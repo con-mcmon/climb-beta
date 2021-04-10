@@ -16,12 +16,17 @@ const BetaSchema = new mongoose.Schema({
   });
 
 const CruxSchema = new mongoose.Schema({
-  alt: String,
-  coordinates: {x: Number, y: Number},
+  name: String,
+  img: String,
+  coordinates: {
+    x: Number,
+    y: Number
+    }
   });
 
 const RouteSchema = new mongoose.Schema({
   name: String,
+  img: String,
   crux: [CruxSchema],
   beta: [BetaSchema]
   });

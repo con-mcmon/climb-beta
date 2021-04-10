@@ -1,7 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
 import { toPx } from './helpers';
-import blackCircle from './content/images/circle-black.png';
-import redCircle from './content/images/circle-red.png';
 
 const styles = {
   color: {

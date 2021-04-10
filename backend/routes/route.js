@@ -6,24 +6,24 @@ const invalidRouteMessage = { error: 'Invalid Route' };
 
 router.get('/', async (req, res) => {
 	const routes = await Route.find();
-	res.send(routes)
+	//send route.id and route.name only
+	res.send(routes.map(({ _id, name }) => ({ id: _id, name: name }) ))
   })
 
 router.post('/', async (req, res) => {
   try {
     const route = new Route({
-  		name: req.body.name,
-      alt: req.body.alt
-      })
-
-    await route.save();
-  	res.send(route);
-  }
+			name: req.body.name,
+			img: req.body.img
+			})
+		await route.save();
+		res.send(route);
+	}
   catch {
     res.status(404);
     res.send({ error: 'Invalid Body' });
-  }
-  })
+	}
+	})
 
 router.delete('/', async (req, res) => {
 	try {
@@ -38,7 +38,7 @@ router.delete('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-		const route = await Route.findById(req.params.routeID);
+		const route = await Route.findById(req.params.id);
     res.send(route);
   }
   catch {
@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
 	try {
-		const route = await Route.findById(req.params.routeID);
+		const route = await Route.findById(req.params.id);
 
     for (const key in req.body) {
       route[key] = req.body[key];

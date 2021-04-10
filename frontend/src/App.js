@@ -3,24 +3,31 @@ import axios from 'axios';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
 import { TouchNodeDashboad, TouchNode, CruxNode } from './nodes';
-import routes from './content/routes';
 
 class App extends Component {
   constructor(props) {
     super();
     this.state = {
-      route: routes.churningInTheWake,
+      routes: [],
+      route: null,
       crux: null,
       nodes: [],
     }
   }
 
   componentDidMount = () => {
+    this.getRoutes();
     document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount = () => {
     document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  getRoutes = () => {
+    axios.get('/routes')
+      .then((res) => this.setState({ routes: res.data }))
+      .catch((err) => console.error(err))
   }
 
   handleKeyDown = (e) => {
@@ -31,16 +38,15 @@ class App extends Component {
 
   renderRoute = (parent) => {
     let params = {};
+    const route = this.state.route;
     if (parent) {
-      const route = this.state.route;
-      params.name = 'main';
-      params.image = route.image;
-      params.alt = route.alt;
+      params.name = route.name;
+      params.image = route.img;
       params.crux= route.crux;
       params.cruxOpen = this.state.crux;
       params.style = {};
     } else {
-      const crux = this.state.route.crux[this.state.crux];
+      const crux = route.crux[this.state.crux];
       params.cruxOpen = null;
       params.name = this.state.crux;
       params.image = crux.image;
@@ -51,7 +57,6 @@ class App extends Component {
               parent={parent}
               name={params.name}
               image={params.image}
-              alt={params.alt}
               crux={params.crux}
               style={params.style}
               handleCruxNodeClick={this.handleCruxNodeClick}
@@ -136,9 +141,31 @@ class App extends Component {
       })
     }
 
+  renderRouteList = () => {
+    const routes = this.state.routes.map(({ name, id }) => {
+      return (
+        <button
+          id={id}
+          onClick={this.handleRouteClick}
+          key={name} >
+          {name}
+        </button> )
+      })
+
+    return (
+      <div>
+        {routes}
+      </div> )
+    }
+
+  handleRouteClick = (e) => {
+    axios.get(`/routes/${e.target.id}`)
+      .then((res) => this.setState({ route: res.data }))
+      .catch((err) => console.error(err))
+  }
+
   handleUploadBetaClick = () => {
-    const routeID = '60711c2ca42a43008c010c10'; //saved in state in future
-    axios.post(`/beta/${routeID}`, this.state.nodes)
+    axios.post(`/beta/${this.state.route._id}`, this.state.nodes)
       .then((res) => console.log(res))
       .catch((err) => console.error(err))
   }
@@ -147,8 +174,9 @@ class App extends Component {
     return (
       <div className='App' >
         <h1>Beta Builder</h1>
+        {this.renderRouteList()}
         <button onClick={this.handleUploadBetaClick}>Upload Beta</button>
-        {this.renderRoute(true)}
+        {this.state.route ? this.renderRoute(true) : null}
         {this.state.crux !== null ? this.renderRoute(false) : null}
       </div>
     );
