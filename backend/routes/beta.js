@@ -17,14 +17,14 @@ router.post('/:routeID', async (req, res) => {
   //add a new Beta to specified Route
   try {
     const route = await Route.findById(req.params.routeID);
-    const nodes = req.body.map(({ coordinates, type, position, note, parent }) => ({
+    const holds = req.body.map(({ coordinates, type, position, note, parent }) => ({
         coordinates: {x: coordinates.x, y: coordinates.y},
         type: type,
         position: position,
         note: note,
         parent: parent
         }))
-    route.beta.push({holds: nodes});
+    route.beta.push({holds: holds});
     await route.save();
     res.send(route);
   }

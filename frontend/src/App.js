@@ -136,12 +136,9 @@ class App extends Component {
       })
     }
 
-  handleUploadRouteClick = () => {
-    axios.post('/routes', {
-      name: 'churning in the wake',
-      alt: this.state.route.alt,
-      nodes: this.state.nodes
-      })
+  handleUploadBetaClick = () => {
+    const routeID = '60711c2ca42a43008c010c10'; //saved in state in future
+    axios.post(`/beta/${routeID}`, this.state.nodes)
       .then((res) => console.log(res))
       .catch((err) => console.error(err))
   }
@@ -150,7 +147,7 @@ class App extends Component {
     return (
       <div className='App' >
         <h1>Beta Builder</h1>
-        <button onClick={this.handleUploadRouteClick}>Upload Route</button>
+        <button onClick={this.handleUploadBetaClick}>Upload Beta</button>
         {this.renderRoute(true)}
         {this.state.crux !== null ? this.renderRoute(false) : null}
       </div>
