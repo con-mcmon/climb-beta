@@ -31,7 +31,7 @@ div.dashboard {
   background-color: #e1e2e3;
 }
 
-div.touch-node-card {
+div.hold-card {
   box-sizing: border-box;
   position: relative;
   width: 90%;
@@ -43,7 +43,7 @@ div.touch-node-card {
   background-color: white;
 }
 
-p.touch-node-card {
+p.hold-card {
   margin: 5%;
   font-weight: bold;
   pointer-events: none;
@@ -68,7 +68,7 @@ p.close {
   pointer-events: auto;
 }
 
-textarea.touch-node-card {
+textarea.hold-card {
   width: 90%;
   margin: auto;
 }
@@ -78,7 +78,7 @@ img.route {
   height: auto;
 }
 
-div.touch-node {
+div.hold {
   width: 2.5%;
   padding-top: 2.5%;
   border-style: solid;
@@ -89,7 +89,7 @@ div.touch-node {
   cursor: pointer;
 }
 
-div.touch-node-bubble {
+div.hold-bubble {
   border-radius: 50%;
   width: 1000%;
   padding-top: 1000%;
@@ -99,14 +99,14 @@ div.touch-node-bubble {
   text-align: center;
 }
 
-div.touch-node-details {
+div.hold-details {
   position: absolute;
   text-align: center;
   left: -90%;
   top: 125%;
 }
 
-span.touch-node {
+span.hold {
   font-weight: bold;
   font-size: 100%;
   cursor: default;
@@ -122,7 +122,7 @@ button.tool-box {
   width: 100%;
 }
 
-span.crux-node {
+span.crux {
   font-size: 150%;
   font-weight: bolder;
   position: absolute;

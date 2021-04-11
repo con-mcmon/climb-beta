@@ -2,7 +2,7 @@ import { Component, createRef } from 'react';
 import axios from 'axios';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
-import { TouchNodeDashboad, TouchNode, CruxNode } from './nodes';
+import { HoldDashboad, Hold, Crux } from './holds';
 
 class App extends Component {
   constructor(props) {
@@ -11,7 +11,7 @@ class App extends Component {
       routes: [],
       route: null,
       crux: null,
-      nodes: [],
+      holds: [],
     }
   }
 
@@ -59,83 +59,83 @@ class App extends Component {
               image={params.image}
               crux={params.crux}
               style={params.style}
-              handleCruxNodeClick={this.handleCruxNodeClick}
+              handleCruxClick={this.handleCruxClick}
               handleCloseClick={this.handleCruxCloseClick}
               cruxOpen={params.cruxOpen}
-              handleMouseMove={this.handleTouchNodeMove}
-              addNode={this.addNode}
-              deleteNode={this.deleteNode}
-              touchNodes={this.state.nodes}
-              handleTouchNodeNote={this.handleTouchNodeNote}
-              swapTouchNodePositions={this.swapTouchNodePositions} />
+              handleMouseMove={this.handleHoldMove}
+              addHold={this.addHold}
+              deleteHold={this.deleteHold}
+              holds={this.state.holds}
+              handleHoldNote={this.handleHoldNote}
+              swapHoldPositions={this.swapHoldPositions} />
   }
 
-  handleCruxNodeClick = (name) => this.setState({ crux: name });
+  handleCruxClick = (name) => this.setState({ crux: name });
 
   handleCruxCloseClick = () => this.setState({ crux: null });
 
-  //TouchNode
-  addNode = (type, x, y, parent) => {
-    const newNode = {
-      id: this.nextTouchNodeID(),
+  //Hold
+  addHold = (type, x, y, parent) => {
+    const newHold = {
+      id: this.nextHoldID(),
       type: type,
       coordinates: {x: x, y: y},
       parent: parent,
       note: '',
-      position: this.nextTouchNodePosition(parent)
+      position: this.nextHoldPosition(parent)
     };
-    this.setState((state) => ({ nodes: [...state.nodes, newNode] }));
+    this.setState((state) => ({ holds: [...state.holds, newHold] }));
   }
 
-  nextTouchNodeID = () => {
-    //increment last id of all nodes
-    const ids = this.state.nodes.map(({ id }) => id);
-    return this.state.nodes.length > 0 ? Math.max(...ids) + 1 : 0;
+  nextHoldID = () => {
+    //increment last id of all holds
+    const ids = this.state.holds.map(({ id }) => id);
+    return this.state.holds.length > 0 ? Math.max(...ids) + 1 : 0;
   }
 
-  nextTouchNodePosition = (parent) => {
-    //increment last position of nodes in parent
-    const siblingPositions = this.state.nodes
-                              .filter((node) => node.parent === parent)
+  nextHoldPosition = (parent) => {
+    //increment last position of holds in parent
+    const siblingPositions = this.state.holds
+                              .filter((hold) => hold.parent === parent)
                               .map(({ position }) => position);
     return siblingPositions.length > 0 ? Math.max(...siblingPositions) + 1 : 0;
   }
 
-  deleteNode = (nodeID) => {
-    this.setState((state) => ({ nodes: state.nodes.filter(({ id }) => id !== nodeID) }));
-    this.shiftNodePositions(nodeID);
+  deleteHold = (holdID) => {
+    this.setState((state) => ({ holds: state.holds.filter(({ id }) => id !== holdID) }));
+    this.shiftHoldPositions(holdID);
   }
 
-  shiftNodePositions = (nodeID) => {
-    const position = this.state.nodes.find(({ id }) => id === nodeID).position;
-    this.setState((state) => ({ nodes: state.nodes.map((node) => node.position > position ? {...node, position: node.position - 1} : node) }));
+  shiftHoldPositions = (holdID) => {
+    const position = this.state.holds.find(({ id }) => id === holdID).position;
+    this.setState((state) => ({ holds: state.holds.map((hold) => hold.position > position ? {...hold, position: hold.position - 1} : hold) }));
   }
 
-  handleTouchNodeMove = (nodeID, x, y) => {
+  handleHoldMove = (holdID, x, y) => {
     this.setState((prevState) => ({
-      nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, coordinates: {x: x, y: y} } : node)
+      holds: prevState.holds.map((hold) => hold.id === holdID ? { ...hold, coordinates: {x: x, y: y} } : hold)
       }))
     }
 
-  handleTouchNodeNote = (nodeID, value) => {
-    this.setState((prevState) => ({ nodes: prevState.nodes.map((node) => node.id === nodeID ? { ...node, note: value } : node) }))
+  handleHoldNote = (holdID, value) => {
+    this.setState((prevState) => ({ holds: prevState.holds.map((hold) => hold.id === holdID ? { ...hold, note: value } : hold) }))
   }
 
-  swapTouchNodePositions = (nodeID, targetNodeID) => {
-    const currentPosition = this.state.nodes.find(({ id }) => id === nodeID).position;
-    const targetPosition = this.state.nodes.find(({ id }) => id === targetNodeID).position;
+  swapHoldPositions = (holdID, targetHoldID) => {
+    const currentPosition = this.state.holds.find(({ id }) => id === holdID).position;
+    const targetPosition = this.state.holds.find(({ id }) => id === targetHoldID).position;
 
     this.setState((prevState) => {
-      const nodes = prevState.nodes;
+      const holds = prevState.holds;
       return {
-        nodes: nodes.map((node) => {
-          if (node.id === nodeID) {
-            return {...node, position: targetPosition}
+        holds: holds.map((hold) => {
+          if (hold.id === holdID) {
+            return {...hold, position: targetPosition}
           }
-          if (node.id === targetNodeID) {
-            return {...node, position: currentPosition}
+          if (hold.id === targetHoldID) {
+            return {...hold, position: currentPosition}
           }
-          return node;
+          return hold;
           })
         }
       })
@@ -165,7 +165,7 @@ class App extends Component {
   }
 
   handleUploadBetaClick = () => {
-    axios.post(`/beta/${this.state.route._id}`, this.state.nodes)
+    axios.post(`/beta/${this.state.route._id}`, this.state.holds)
       .then((res) => console.log(res))
       .catch((err) => console.error(err))
   }
@@ -193,7 +193,7 @@ class Route extends Component {
       },
       onImage: false,
       toolBox: null,
-      touchNode: null
+      hold: null
     }
     this.image = createRef();
   }
@@ -216,38 +216,38 @@ class Route extends Component {
     }
   }
 
-  renderCruxNodes = () => {
+  renderCruxs = () => {
     return this.props.crux.map(({ coords }, index) => {
       const { x, y } = percentToPx(coords.x, coords.y, this.state.imageDimensions.x, this.state.imageDimensions.y);
-      return <CruxNode
+      return <Crux
                 coordinates={{ x:x, y:y }}
                 key={index}
                 id={index}
-                handleClick={this.props.handleCruxNodeClick} />
+                handleClick={this.props.handleCruxClick} />
               })
             }
 
-  //TouchNode
-  childTouchNodes = () => this.props.touchNodes.filter(({ parent }) => parent === this.props.name);
+  //Hold
+  childHolds = () => this.props.holds.filter(({ parent }) => parent === this.props.name);
 
-  renderTouchNodes = () => {
-    return this.childTouchNodes().map(({ id, type, coordinates, note, position }) => {
+  renderHolds = () => {
+    return this.childHolds().map(({ id, type, coordinates, note, position }) => {
         const coords = percentToPx(coordinates.x, coordinates.y, this.state.imageDimensions.x, this.state.imageDimensions.y);
-        return <TouchNode
+        return <Hold
                   key={id}
                   id={id}
                   position={position}
-                  hovered={this.state.touchNode === id}
+                  hovered={this.state.hold === id}
                   type={type}
                   coordinates={{ x:coords.x, y:coords.y }}
                   note={note}
                   containerDimensions={{ x: this.state.imageDimensions.x, y: this.state.imageDimensions.y}}
                   handleMouseMove={this.handleMouseMove}
-                  handleMouseOver={this.handleTouchNodeMouseOver}
-                  handleDeleteClick={this.deleteTouchNode} /> })
+                  handleMouseOver={this.handleHoldMouseOver}
+                  handleDeleteClick={this.deleteHold} /> })
     }
 
-  deleteTouchNode = (id) => this.props.deleteNode(id);
+  deleteHold = (id) => this.props.deleteHold(id);
 
   handleImageLoad = (e) => this.setState({ imageDimensions: { x:  e.target.width, y: e.target.height } });
 
@@ -256,11 +256,11 @@ class Route extends Component {
     this.props.handleMouseMove(id, x, y);
   }
 
-  handleTouchNodeMouseOver = (id, hovered) => hovered ? this.setState({ touchNode: id }) : this.setState({ touchNode: null })
+  handleHoldMouseOver = (id, hovered) => hovered ? this.setState({ hold: id }) : this.setState({ hold: null })
 
-  handleTouchNodeNote = (id, value) => this.props.handleTouchNodeNote(id, value);
+  handleHoldNote = (id, value) => this.props.handleHoldNote(id, value);
 
-  swapTouchNodeID = (id, down) => this.props.swapTouchNodeID(id, down);
+  swapHoldID = (id, down) => this.props.swapHoldID(id, down);
 
   //ToolBox
   handleClick = (e) => {
@@ -272,23 +272,23 @@ class Route extends Component {
 
   handleToolBoxClick = (type, xCoord, yCoord) => {
     const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageDimensions.x, this.state.imageDimensions.y);
-    this.props.addNode(type, x, y, this.props.name);
+    this.props.addHold(type, x, y, this.props.name);
     this.setState({ toolBox: null });
   }
 
   closeToolBox = () => this.setState({ toolBox: null });
 
-  renderTouchNodeDashboard = () => {
+  renderHoldDashboard = () => {
     if (this.props.cruxOpen === null) {
       return (
-        <TouchNodeDashboad
-          nodes={this.childTouchNodes()}
-          selectedNode={this.state.touchNode}
-          handleMouseOver={this.handleTouchNodeMouseOver}
-          handleNoteChange={this.handleTouchNodeNote}
-          handleDeleteClick={this.deleteTouchNode}
-          addNode={this.props.addNode}
-          swapNodePositions={this.props.swapTouchNodePositions} />
+        <HoldDashboad
+          holds={this.childHolds()}
+          selectedHold={this.state.hold}
+          handleMouseOver={this.handleHoldMouseOver}
+          handleNoteChange={this.handleHoldNote}
+          handleDeleteClick={this.deleteHold}
+          addHold={this.props.addHold}
+          swapHoldPositions={this.props.swapHoldPositions} />
         )
     }
     return null;
@@ -303,16 +303,16 @@ class Route extends Component {
             ref={this.image}
             onLoad={this.handleImageLoad}
             src={this.props.image}
-            alt={this.props.alt}
+            alt={this.props.name}
             onMouseOver={ () => this.setState({ onImage: true }) }
             onMouseLeave={ () => this.setState({ onImage: false }) }
             onClick={this.handleClick} />
-          {this.props.crux ? this.renderCruxNodes() : null}
-          {this.renderTouchNodes()}
+          {this.props.crux ? this.renderCruxs() : null}
+          {this.renderHolds()}
           {this.state.toolBox}
           {!this.props.parent ? <button onClick={this.props.handleCloseClick}>Close</button> : null}
         </div>
-        {this.renderTouchNodeDashboard()}
+        {this.renderHoldDashboard()}
       </div>
       )
     }

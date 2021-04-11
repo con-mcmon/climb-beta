@@ -12,36 +12,36 @@ const styles = {
   }
 }
 
-function TouchNodeDashboad(props) {
+function HoldDashboad(props) {
   const [draggedCard, setDraggedCard] = useState(null);
 
-  const renderNodes = () => {
-    return props.nodes.map(({ id, position, note, type }) => {
+  const renderHolds = () => {
+    return props.holds.map(({ id, position, note, type }) => {
       return (
-        <TouchNodeCard
+        <HoldCard
           id={id}
           position={position}
           key={id}
           note={note}
           type={type}
-          hovered={id === props.selectedNode}
+          hovered={id === props.selectedHold}
           handleMouseOver={props.handleMouseOver}
           handleNoteChange={props.handleNoteChange}
           handleDeleteClick={props.handleDeleteClick}
           setDraggedCard={(id) => setDraggedCard(id)}
-          handleDrop={(id) => props.swapNodePositions(draggedCard, id)} />
+          handleDrop={(id) => props.swapHoldPositions(draggedCard, id)} />
           )
         })
       }
 
   return (
     <div className='dashboard' >
-      {renderNodes()}
+      {renderHolds()}
     </div>
   )
 }
 
-function TouchNodeCard(props) {
+function HoldCard(props) {
   const [hovered, setHovered] = useState(false);
   const handleMouseOver = (hovered) => {
     setHovered(hovered);
@@ -128,7 +128,7 @@ function TouchNodeCard(props) {
 
   return (
     <div
-      className='touch-node-card'
+      className='hold-card'
       style={containerStyle()}
       onMouseEnter={() => handleMouseOver(true)}
       onMouseLeave={() => handleMouseOver(false)}
@@ -140,16 +140,16 @@ function TouchNodeCard(props) {
       onDragOver={handleDragOver}
       onDrop={handleDrop} >
       <p
-        className='touch-node-card close'
+        className='hold-card close'
         style={closeStyle()}
         onClick={handleCloseClick} >
         X
       </p>
-      <p className='touch-node-card position'>{props.position}</p>
-      <p className='touch-node-card'>{props.type}</p>
+      <p className='hold-card position'>{props.position}</p>
+      <p className='hold-card'>{props.type}</p>
       <textarea
         style={draggedOver ? removePointerEvents() : null}
-        className='touch-node-card'
+        className='hold-card'
         rows={2}
         type='text'
         id='notes'
@@ -159,7 +159,7 @@ function TouchNodeCard(props) {
   )
 }
 
-function TouchNode(props) {
+function Hold(props) {
   const [hovered, setHovered] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
   const handleMouseOver = (hovered) => {
@@ -203,9 +203,9 @@ function TouchNode(props) {
 
   const renderDetails = () => {
     return (
-      <div className='touch-node-details'>
-        <span className='touch-node'>{`${props.position}:${props.type}`}</span>
-        <button className='touch-node' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
+      <div className='hold-details'>
+        <span className='hold'>{`${props.position}:${props.type}`}</span>
+        <button className='hold' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
       </div>
       )
   }
@@ -224,20 +224,20 @@ function TouchNode(props) {
   return (
     <div
       ref={div}
-      className='touch-node'
+      className='hold'
       style={style()}
       onMouseMove={handleMouseMove}
       onMouseDown={() => setMouseDown(true)}
       onMouseUp={() => setMouseDown(false)}
       onMouseEnter={() => handleMouseOver(true)}
       onMouseLeave={() => handleMouseOver(false)} >
-      {mouseDown ? <div className='touch-node-bubble'></div> : null}
+      {mouseDown ? <div className='hold-bubble'></div> : null}
       {hovered ? renderDetails() : null}
     </div>
     )
   }
 
-function CruxNode(props) {
+function Crux(props) {
   const [hovered, setHovered] = useState(false);
   const style = () => {
     let style = { left:toPx(props.coordinates.x), top:toPx(props.coordinates.y) };
@@ -247,7 +247,7 @@ function CruxNode(props) {
   }
   return (
     <span
-      className='crux-node'
+      className='crux'
       style={style()}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -256,4 +256,4 @@ function CruxNode(props) {
     )
   }
 
-export { TouchNodeDashboad, TouchNode, CruxNode };
+export { HoldDashboad, Hold, Crux };
