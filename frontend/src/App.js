@@ -63,9 +63,9 @@ class App extends Component {
               handleCloseClick={this.handleCruxCloseClick}
               cruxOpen={params.cruxOpen}
               handleMouseMove={this.handleHoldMove}
+              holds={this.state.holds.filter(({ parent }) => parent === route.name)}
               addHold={this.addHold}
               deleteHold={this.deleteHold}
-              holds={this.state.holds}
               handleHoldNote={this.handleHoldNote}
               swapHoldPositions={this.swapHoldPositions} />
   }
@@ -228,10 +228,8 @@ class Route extends Component {
             }
 
   //Hold
-  childHolds = () => this.props.holds.filter(({ parent }) => parent === this.props.name);
-
   renderHolds = () => {
-    return this.childHolds().map(({ id, type, coordinates, note, position }) => {
+    return this.props.holds.map(({ id, type, coordinates, note, position }) => {
         const coords = percentToPx(coordinates.x, coordinates.y, this.state.imageDimensions.x, this.state.imageDimensions.y);
         return <Hold
                   key={id}
@@ -282,7 +280,7 @@ class Route extends Component {
     if (this.props.cruxOpen === null) {
       return (
         <HoldDashboad
-          holds={this.childHolds()}
+          holds={this.props.holds}
           selectedHold={this.state.hold}
           handleMouseOver={this.handleHoldMouseOver}
           handleNoteChange={this.handleHoldNote}
