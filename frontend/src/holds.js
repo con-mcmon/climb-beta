@@ -140,16 +140,15 @@ function HoldCard(props) {
       onDragOver={handleDragOver}
       onDrop={handleDrop} >
       <p
-        className='hold-card close'
+        className='hold-card-close'
         style={closeStyle()}
-        onClick={handleCloseClick} >
-        X
-      </p>
-      <p className='hold-card position'>{props.position}</p>
-      <p className='hold-card'>{props.type}</p>
+        onClick={handleCloseClick} >X</p>
+      <p
+        className='hold-card-position'
+        style={draggedOver ? removePointerEvents() : null}>{props.position}</p>
+      <p style={draggedOver ? removePointerEvents() : null}>{props.type}</p>
       <textarea
         style={draggedOver ? removePointerEvents() : null}
-        className='hold-card'
         rows={2}
         type='text'
         id='notes'
@@ -204,8 +203,8 @@ function Hold(props) {
   const renderDetails = () => {
     return (
       <div className='hold-details'>
-        <span className='hold'>{`${props.position}:${props.type}`}</span>
-        <button className='hold' onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
+        <span>{`${props.position}:${props.type}`}</span>
+        <button onClick={() => props.handleDeleteClick(props.id)}>Delete</button>
       </div>
       )
   }
@@ -231,7 +230,7 @@ function Hold(props) {
       onMouseUp={() => setMouseDown(false)}
       onMouseEnter={() => handleMouseOver(true)}
       onMouseLeave={() => handleMouseOver(false)} >
-      {mouseDown ? <div className='hold-bubble'></div> : null}
+      {mouseDown ? <div className='hold-container'></div> : null}
       {hovered ? renderDetails() : null}
     </div>
     )

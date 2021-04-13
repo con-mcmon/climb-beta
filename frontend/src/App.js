@@ -297,7 +297,6 @@ class Route extends Component {
       <div className='route-container' >
         <div className='route' style={this.props.style} >
           <img
-            className='route'
             ref={this.image}
             onLoad={this.handleImageLoad}
             src={this.props.image}
@@ -324,11 +323,11 @@ function ToolBox(props) {
 
   return (
     <div className='tool-box' style={{ left:toPx(x), top:toPx(y) }}>
-      <button className='tool-box' onClick={handleClick} value={'foot-right'}>Right Foot</button>
-      <button className='tool-box' onClick={handleClick} value={'foot-left'}>Left Foot</button>
-      <button className='tool-box' onClick={handleClick} value={'hand-right'}>Right Hand</button>
-      <button className='tool-box' onClick={handleClick} value={'hand-left'}>Left Hand</button>
-      <button className='tool-box' onClick={() => props.handleCloseClick()}>Exit</button>
+      <button onClick={handleClick} value={'foot-right'}>Right Foot</button>
+      <button onClick={handleClick} value={'foot-left'}>Left Foot</button>
+      <button onClick={handleClick} value={'hand-right'}>Right Hand</button>
+      <button onClick={handleClick} value={'hand-left'}>Left Hand</button>
+      <button onClick={() => props.handleCloseClick()}>Exit</button>
     </div>
   )
 }

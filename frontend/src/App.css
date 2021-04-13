@@ -3,19 +3,24 @@
   justify-content: center;
 }
 
-div.route-container {
+.route-container {
   position: absolute;
   width: 100%;
 }
 
-div.route {
+.route {
   position: relative;
   margin: auto;
   width: 60%;
   border-style: solid;
 }
 
-div.dashboard {
+.route img {
+  width: 100%;
+  height: auto;
+}
+
+.dashboard {
   position: absolute;
   left: 82.5%;
   top: 10%;
@@ -31,7 +36,7 @@ div.dashboard {
   background-color: #e1e2e3;
 }
 
-div.hold-card {
+.hold-card {
   box-sizing: border-box;
   position: relative;
   width: 90%;
@@ -43,42 +48,32 @@ div.hold-card {
   background-color: white;
 }
 
-p.hold-card {
+.hold-card p {
+  font-size: 15px;
   margin: 5%;
   font-weight: bold;
-  pointer-events: none;
 }
 
-p.position {
+.hold-card-position {
   position: absolute;
-  font-size: 15px;
   top: 1%;
   left: 1%;
-  margin: 2%;
 }
 
-p.close {
+.hold-card-close {
   color: grey;
-  font-size: 15px;
   position: absolute;
   top: 1%;
   right: 1%;
-  margin: 2%;
   cursor: pointer;
-  pointer-events: auto;
 }
 
-textarea.hold-card {
+.hold-card textarea {
   width: 90%;
   margin: auto;
 }
 
-img.route {
-  width: 100%;
-  height: auto;
-}
-
-div.hold {
+.hold {
   width: 2.5%;
   padding-top: 2.5%;
   border-style: solid;
@@ -89,14 +84,19 @@ div.hold {
   cursor: pointer;
 }
 
-div.hold-bubble {
+.hold-details span {
+  font-weight: bold;
+  font-size: 100%;
+  cursor: default;
+}
+
+.hold-container {
   border-radius: 50%;
-  width: 1000%;
-  padding-top: 1000%;
-  left: -450%;
-  top: -450%;
+  width: 3000%;
+  padding-top: 3000%;
+  left: -1500%;
+  top: -1500%;
   position: absolute;
-  text-align: center;
 }
 
 div.hold-details {
@@ -106,23 +106,17 @@ div.hold-details {
   top: 125%;
 }
 
-span.hold {
-  font-weight: bold;
-  font-size: 100%;
-  cursor: default;
-}
-
 div.tool-box {
   position: absolute;
   width: 20%;
   border-style: solid;
 }
 
-button.tool-box {
+.tool-box button {
   width: 100%;
 }
 
-span.crux {
+.crux {
   font-size: 150%;
   font-weight: bolder;
   position: absolute;
