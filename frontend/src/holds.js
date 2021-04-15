@@ -1,16 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { toPx } from './helpers';
-
-const styles = {
-  color: {
-    foot: '#00ffd5',
-    hand: '#ffff00'
-  },
-  opacity: {
-    hovered: '1.0',
-    notHovered: '0.3'
-  }
-}
+import { useDivCenter } from './hooks';
+import styles from './style';
 
 function HoldDashboad(props) {
   const [draggedCard, setDraggedCard] = useState(null);
@@ -118,7 +109,7 @@ function HoldCard(props) {
   const containerStyle = () => {
     let style = { };
     if (hovered || props.hovered) {
-      style.backgroundColor = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand
+      style.backgroundColor = props.type.split('-')[0] === 'foot' ? styles.holdColor.foot : styles.holdColor.hand
     }
     if (draggedOver) {
       style.borderBottom = 'thick solid black';
@@ -179,30 +170,6 @@ function Hold(props) {
     props.handleMouseOver(props.id, hovered);
   }
 
-  const [divSize, setDivSize] = useState({ x: 0, y: 0 });
-  const div = useRef();
-  const updateDivSize = () => {
-    if (div.current) {
-      setDivSize({
-        x: div.current.offsetWidth,
-        y: div.current.offsetHeight
-        })
-      }
-    }
-  useEffect(() => updateDivSize(), []);
-  useEffect(() => {
-    window.addEventListener('resize', updateDivSize);
-    return () => window.removeEventListener('resize', updateDivSize);
-  })
-
-  const [center, setCenter] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    setCenter({
-        x: props.coordinates.x - (divSize.x / 2),
-        y: props.coordinates.y - (divSize.y / 2)
-      });
-  }, [props.coordinates, divSize])
-
   const handleMouseMove = (event) => {
     if (mouseDown) {
       const [newX, newY] = [props.coordinates.x + event.movementX, props.coordinates.y + event.movementY];
@@ -222,21 +189,23 @@ function Hold(props) {
       )
   }
 
+  const div = useRef();
+  const center = useDivCenter(div, props.coordinates);
+
   const style = () => {
     let style = {
       left:toPx(center.x),
       top:toPx(center.y)
     };
-    const color = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand;
-    style.borderColor = color;
-    style.opacity = (hovered || mouseDown || props.hovered) ? styles.opacity.hovered : styles.opacity.notHovered;
+    style.borderColor = props.type.split('-')[0] === 'foot' ? styles.holdColor.foot : styles.holdColor.hand;
+    style.opacity = (hovered || props.hovered) ? styles.opacity.hovered : styles.opacity.notHovered;
     return style
   }
 
   return (
     <div
       ref={div}
-      className='hold'
+      className='node'
       style={style()}
       onMouseMove={handleMouseMove}
       onMouseDown={() => setMouseDown(true)}

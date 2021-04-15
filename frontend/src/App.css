@@ -127,3 +127,7 @@ div.tool-box {
   position: absolute;
   cursor: pointer;
 }
+
+.beta-dashboard {
+  border-style: solid;
+}
