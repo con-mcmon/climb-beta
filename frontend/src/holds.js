@@ -46,8 +46,10 @@ function HoldDashboad(props) {
       }
 
   return (
-    <div className='dashboard' >
-      {renderHolds()}
+    <div className='dashboard-container' >
+      <div className='dashboard' >
+        {renderHolds()}
+      </div>
     </div>
   )
 }
