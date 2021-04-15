@@ -15,8 +15,19 @@ const styles = {
 function HoldDashboad(props) {
   const [draggedCard, setDraggedCard] = useState(null);
 
+  const sortHolds = ( a, b ) => {
+    if ( a.position < b.position ) {
+      return -1;
+    }
+    if ( a.position > b.position ) {
+      return 1;
+    }
+    return 0;
+  }
+
   const renderHolds = () => {
-    return props.holds.map(({ id, position, note, type }) => {
+    const sortedHolds = props.holds.sort(sortHolds);
+    return sortedHolds.map(({ id, position, note, type }) => {
       return (
         <HoldCard
           id={id}
@@ -103,7 +114,7 @@ function HoldCard(props) {
   }
 
   const containerStyle = () => {
-    let style = { order: props.position };
+    let style = { };
     if (hovered || props.hovered) {
       style.backgroundColor = props.type.split('-')[0] === 'foot' ? styles.color.foot : styles.color.hand
     }
