@@ -205,7 +205,7 @@ function Hold(props) {
   return (
     <div
       ref={div}
-      className='node'
+      className='hold'
       style={style()}
       onMouseMove={handleMouseMove}
       onMouseDown={() => setMouseDown(true)}
