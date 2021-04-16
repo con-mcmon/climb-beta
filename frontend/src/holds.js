@@ -37,13 +37,11 @@ function HoldDashboad(props) {
       }
 
   return (
-    <div className='dashboard-container' >
-      <div className='dashboard' >
-        {renderHolds()}
-      </div>
+    <div className='dashboard' >
+      {renderHolds()}
     </div>
-  )
-}
+    )
+  }
 
 function HoldCard(props) {
   const [hovered, setHovered] = useState(false);

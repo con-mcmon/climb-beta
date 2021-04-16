@@ -315,22 +315,20 @@ class Route extends Component {
   render() {
     return (
       <div className='content'>
-        <div className='route-container' >
-          <div className='route' style={this.props.style} >
-            <img
-              ref={this.image}
-              onLoad={this.handleImageLoad}
-              src={this.props.image}
-              alt={this.props.name}
-              onMouseOver={ () => this.setState({ onImage: true }) }
-              onMouseLeave={ () => this.setState({ onImage: false }) }
-              onClick={this.handleClick} />
-            {this.props.crux ? this.renderCruxs() : null}
-            {this.renderHolds()}
-            {this.renderBeta()}
-            {this.state.toolBox}
-            {!this.props.parent ? <button onClick={this.props.handleCloseClick}>Close</button> : null}
-          </div>
+        <div className='route' style={this.props.style} >
+          <img
+            ref={this.image}
+            onLoad={this.handleImageLoad}
+            src={this.props.image}
+            alt={this.props.name}
+            onMouseOver={ () => this.setState({ onImage: true }) }
+            onMouseLeave={ () => this.setState({ onImage: false }) }
+            onClick={this.handleClick} />
+          {this.props.crux ? this.renderCruxs() : null}
+          {this.renderHolds()}
+          {this.renderBeta()}
+          {this.state.toolBox}
+          {!this.props.parent ? <button onClick={this.props.handleCloseClick}>Close</button> : null}
         </div>
         {this.renderHoldDashboard()}
       </div>
