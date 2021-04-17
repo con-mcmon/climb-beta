@@ -1,16 +1,26 @@
 import { useState, useEffect } from 'react';
 
-function useEscKey() {
+function useKey(code) {
   const [keyDown, setKeyDown] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.keyCode === 27) {
+      if (e.keyCode === code) {
         setKeyDown(true);
       }
     }
+    const handleKeyUp = (e) => {
+      if (e.keyCode === code) {
+        setKeyDown(false);
+      }
+    }
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
+    }
     })
 
   return keyDown;
@@ -27,18 +37,18 @@ function useDivSize(ref) {
       }
     }
 
-  useEffect(() => updateDivSize(), []);
   useEffect(() => {
+    updateDivSize();
     window.addEventListener('resize', updateDivSize);
     return () => window.removeEventListener('resize', updateDivSize);
-  })
+    }, [])
 
   return divSize;
 }
 
 function useDivCenter(ref, coordinates) {
   const divSize = useDivSize(ref);
-  
+
   const [center, setCenter] = useState({ x: 0, y: 0 });
   useEffect(() => {
     setCenter({
@@ -50,4 +60,4 @@ function useDivCenter(ref, coordinates) {
   return center;
 }
 
-export { useDivCenter }
+export { useDivSize, useDivCenter, useKey }

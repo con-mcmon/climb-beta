@@ -1,10 +1,10 @@
-import { Component, createRef, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
 import { HoldDashboad, Hold, Crux } from './holds';
 import { BetaDashboard, Beta } from './beta';
-import { useDivCenter } from './hooks';
+import { useDivSize, useKey } from './hooks';
 import styles from './style';
 
 function App(props) {
@@ -202,123 +202,102 @@ function Content(props) {
     )
 }
 
-class Route extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      imageDimensions: {
-        x: 0,
-        y:0
-      },
-      onImage: false,
-      toolBox: null,
-    }
-    this.image = createRef();
+function Route(props) {
+  const [toolBox, setToolbox] = useState(null);
+
+  const escKeyDown = useKey(27);
+  useEffect(() => {
+    if (escKeyDown) {
+      setToolbox(null);
+      }
+    }, [escKeyDown])
+
+  const image = useRef();
+  const imageDimensions = useDivSize(image);
+
+  const handleImageLoad = (e) => {
+    imageDimensions.x = e.target.width;
+    imageDimensions.y = e.target.height;
   }
 
-  componentDidMount = () => {
-    window.addEventListener('resize', this.updateImageDimensions);
-    document.addEventListener('keydown', this.handleKeyDown);
-  }
-
-  componentWillUnmount = () => {
-    window.removeEventListener('resize', this.updateImageDimensions);
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  updateImageDimensions = () => this.setState({ imageDimensions: { x: this.image.current.width, y: this.image.current.height } });
-
-  handleKeyDown = (e) => {
-    if (e.keyCode === 27) {
-      this.closeToolBox();
-    }
-  }
-
-  renderCruxs = () => {
-    return this.props.crux.map(({ coords }, index) => {
-      const { x, y } = percentToPx(coords.x, coords.y, this.state.imageDimensions.x, this.state.imageDimensions.y);
+  const renderCruxs = () => {
+    return props.crux.map(({ coords }, index) => {
+      const { x, y } = percentToPx(coords.x, coords.y, imageDimensions.x, imageDimensions.y);
       return <Crux
                 coordinates={{ x:x, y:y }}
                 key={index}
                 id={index}
-                handleClick={this.props.handleCruxClick} />
+                handleClick={props.handleCruxClick} />
               })
             }
 
   //Hold
-  renderHolds = () => {
-    return this.props.holds.map(({ id, type, coordinates, note, position }) => {
-        const coords = percentToPx(coordinates.x, coordinates.y, this.state.imageDimensions.x, this.state.imageDimensions.y);
+  const renderHolds = () => {
+    return props.holds.map(({ id, type, coordinates, note, position }) => {
+        const coords = percentToPx(coordinates.x, coordinates.y, imageDimensions.x, imageDimensions.y);
         return <Hold
                   key={id}
                   id={id}
                   position={position}
-                  hovered={this.props.selectedHold === id}
+                  hovered={props.selectedHold === id}
                   type={type}
                   coordinates={{ x:coords.x, y:coords.y }}
                   note={note}
-                  containerDimensions={{ x: this.state.imageDimensions.x, y: this.state.imageDimensions.y}}
-                  handleMouseMove={this.handleMouseMove}
-                  handleMouseOver={this.props.handleHoldMouseOver}
-                  handleDeleteClick={this.deleteHold} /> })
+                  containerDimensions={{ x: imageDimensions.x, y: imageDimensions.y}}
+                  handleMouseMove={handleMouseMove}
+                  handleMouseOver={props.handleHoldMouseOver}
+                  handleDeleteClick={deleteHold} /> })
     }
 
-  deleteHold = (id) => this.props.deleteHold(id);
+  const deleteHold = (id) => props.deleteHold(id);
 
-  handleImageLoad = (e) => this.setState({ imageDimensions: { x:  e.target.width, y: e.target.height } });
-
-  handleMouseMove = (id, xCoord, yCoord) => {
-    const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageDimensions.x, this.state.imageDimensions.y);
-    this.props.handleMouseMove(id, x, y);
+  const handleMouseMove = (id, xCoord, yCoord) => {
+    const { x, y } = pxToPercent(xCoord, yCoord, imageDimensions.x, imageDimensions.y);
+    props.handleMouseMove(id, x, y);
   }
 
-  swapHoldID = (id, down) => this.props.swapHoldID(id, down);
+  const swapHoldID = (id, down) => props.swapHoldID(id, down);
 
   //Beta
-  renderBeta = () => this.props.beta.map(({ _id, holds }) => <Beta id={_id} holds={holds} key={_id} imageDimensions={this.state.imageDimensions} />);
+  const renderBeta = () => props.beta.map(({ _id, holds }) => <Beta id={_id} holds={holds} key={_id} imageDimensions={imageDimensions} />);
 
   //ToolBox
-  handleClick = (e) => {
-    this.setState({ toolBox: <ToolBox
-                                coordinates={{ x:e.nativeEvent.offsetX, y:e.nativeEvent.offsetY }}
-                                handleClick={this.handleToolBoxClick}
-                                handleCloseClick={this.closeToolBox} /> });
+  const handleClick = (e) => {
+    setToolbox(
+      <ToolBox
+        coordinates={{ x:e.nativeEvent.offsetX, y:e.nativeEvent.offsetY }}
+        handleClick={handleToolBoxClick}
+        handleCloseClick={() => setToolbox(null)} /> )
+      }
+
+  const handleToolBoxClick = (type, xCoord, yCoord) => {
+    const { x, y } = pxToPercent(xCoord, yCoord, imageDimensions.x, imageDimensions.y);
+    props.addHold(type, x, y, props.name);
+    setToolbox(null);
   }
 
-  handleToolBoxClick = (type, xCoord, yCoord) => {
-    const { x, y } = pxToPercent(xCoord, yCoord, this.state.imageDimensions.x, this.state.imageDimensions.y);
-    this.props.addHold(type, x, y, this.props.name);
-    this.setState({ toolBox: null });
-  }
-
-  closeToolBox = () => this.setState({ toolBox: null });
-
-  handleUploadBetaClick = () => {
-    axios.post(`/beta/${this.props.id}`, this.props.holds)
+  const handleUploadBetaClick = () => {
+    axios.post(`/beta/${props.id}`, props.holds)
       .then((res) => console.log(res))
       .catch((err) => console.error(err))
   }
 
-  render() {
-    return (
-      <div className='route' style={this.props.style} >
-        <img
-          ref={this.image}
-          onLoad={this.handleImageLoad}
-          src={this.props.image}
-          alt={this.props.name}
-          onMouseOver={ () => this.setState({ onImage: true }) }
-          onMouseLeave={ () => this.setState({ onImage: false }) }
-          onClick={this.handleClick} />
-        {this.props.crux ? this.renderCruxs() : null}
-        {this.renderHolds()}
-        {this.renderBeta()}
-        {this.state.toolBox}
-        {!this.props.parent ? <button onClick={this.props.handleCloseClick}>Close</button> : null}
-        <button onClick={this.handleUploadBetaClick}>Upload Beta</button>
-      </div>
-      )
-    }
+  return (
+    <div className='route' style={props.style} >
+      <img
+        ref={image}
+        onLoad={handleImageLoad}
+        src={props.image}
+        alt={props.name}
+        onClick={handleClick} />
+      {props.crux ? renderCruxs() : null}
+      {renderHolds()}
+      {renderBeta()}
+      {toolBox}
+      {!props.parent ? <button onClick={props.handleCloseClick}>Close</button> : null}
+      <button onClick={handleUploadBetaClick}>Upload Beta</button>
+    </div>
+    )
   }
 
 function ToolBox(props) {
