@@ -14,8 +14,7 @@ class App extends Component {
       routes: [],
       route: null,
       crux: null,
-      holds: [],
-      beta: []
+      holds: []
     }
   }
 
@@ -62,7 +61,7 @@ class App extends Component {
               name={params.name}
               image={params.image}
               holds={this.state.holds}
-              beta={this.state.beta}
+              beta={route.beta}
               crux={params.crux}
               style={params.style}
               handleCruxClick={this.handleCruxClick}
@@ -166,7 +165,7 @@ class App extends Component {
 
   handleRouteClick = (e) => {
     axios.get(`/routes/${e.target.id}`)
-      .then((res) => this.setState({ route: res.data, beta: [], crux: null }))
+      .then((res) => this.setState({ route: res.data, crux: null }))
       .catch((err) => console.error(err))
   }
 
@@ -177,21 +176,12 @@ class App extends Component {
       .catch((err) => console.error(err))
   }
 
-  handleBetaClick = (e) => {
-    const id = e.target.id;
-    const beta = this.state.route.beta.find(({ _id }) => _id === id);
-    if (!this.state.beta.find(({ _id }) => _id === id)) {
-      this.setState((state) => ({ beta: [...state.beta, beta] }));
-    }
-  }
-
   render() {
     const route = this.state.route;
     return (
       <div className='App' >
         <h1>Beta Builder</h1>
         {this.renderRouteList()}
-        {route ? <BetaDashboard beta={this.state.route.beta} handleBetaClick={this.handleBetaClick} /> : null}
         {route ? <button onClick={this.handleUploadBetaClick}>Upload Beta</button> : null}
         {route ? this.renderRoute(true) : null}
         {this.state.crux !== null ? this.renderRoute(false) : null}
@@ -210,7 +200,8 @@ class Route extends Component {
       },
       onImage: false,
       toolBox: null,
-      hold: null
+      hold: null,
+      renderedBeta: []
     }
     this.image = createRef();
   }
@@ -278,7 +269,7 @@ class Route extends Component {
   swapHoldID = (id, down) => this.props.swapHoldID(id, down);
 
   //Beta
-  renderBeta = () => this.props.beta.map(({ _id, holds }) => <Beta id={_id} holds={holds} key={_id} imageDimensions={this.state.imageDimensions} />);
+  renderBeta = () => this.state.renderedBeta.map(({ _id, holds }) => <Beta id={_id} holds={holds} key={_id} imageDimensions={this.state.imageDimensions} />);
 
   //ToolBox
   handleClick = (e) => {
@@ -312,6 +303,14 @@ class Route extends Component {
     return null;
   }
 
+  handleBetaClick = (e) => {
+    const id = e.target.id;
+    const beta = this.props.beta.find(({ _id }) => _id === id);
+    if (!this.state.renderedBeta.find(({ _id }) => _id === id)) {
+      this.setState((state) => ({ renderedBeta: [...state.renderedBeta, beta] }));
+    }
+  }
+
   render() {
     return (
       <div className='content'>
@@ -330,6 +329,7 @@ class Route extends Component {
           {this.state.toolBox}
           {!this.props.parent ? <button onClick={this.props.handleCloseClick}>Close</button> : null}
         </div>
+        <BetaDashboard beta={this.props.beta} handleBetaClick={this.handleBetaClick} />
         {this.renderHoldDashboard()}
       </div>
       )

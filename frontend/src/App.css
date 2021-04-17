@@ -120,5 +120,25 @@ div.tool-box {
 }
 
 .beta-dashboard {
-  border-style: solid;
+  display: inline-block;
+  vertical-align: top;
+  width: auto;
+  height: 70%;
+  margin: 1%;
+  border: solid black;
+}
+
+.beta-card {
+  box-sizing: border-box;
+  margin: 5px;
+  padding: 5px;
+  border: solid black;
+}
+
+.beta-card:hover {
+  background: grey;
+}
+
+.beta-card span {
+  pointer-events: none;
 }

@@ -7,31 +7,21 @@ function BetaDashboard(props) {
   return (
     <div className='beta-dashboard'>
       <h1>Beta</h1>
-      <BetaList beta={props.beta} handleClick={props.handleBetaClick} />
+      {props.beta.map(({ _id, holds }, index) => <BetaCard id={_id} key={_id} onClick={props.handleBetaClick} />)}
     </div>
     )
 }
 
-function BetaList(props) {
-  const renderBetaButtons = () => props.beta.map(({ _id, holds }) => {
-    return (
-      <li key={_id}>
-        <button
-          id={_id}
-          onClick={(e) => props.handleClick(e)} >
-          {_id}
-        </button>
-      </li> )
-    })
-
+function BetaCard(props) {
   return (
-    <div className='beta-list' >
-      <ul>
-        {renderBetaButtons()}
-      </ul>
+    <div
+      className='beta-card'
+      id={props.id}
+      onClick={props.onClick} >
+      <span>{props.id}</span>
     </div>
     )
-  }
+}
 
 function Beta(props) {
   return (
