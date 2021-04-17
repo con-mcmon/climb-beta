@@ -37,7 +37,7 @@ function HoldDashboad(props) {
       }
 
   return (
-    <div className='dashboard' >
+    <div className='hold-dashboard' >
       {renderHolds()}
     </div>
     )
@@ -98,7 +98,6 @@ function HoldCard(props) {
       clearTimeout(timeoutID);
     };
   }, [closeClickCount]);
-
 
   const handleNoteChange = (e) => {
     props.handleNoteChange(props.id, e.target.value);
