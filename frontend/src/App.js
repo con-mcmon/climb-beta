@@ -56,15 +56,12 @@ function Content(props) {
   const [beta, setBeta] = useState([]);
   const [crux, setCrux] = useState(null);
 
+  const escKeyDown = useKey(27);
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.keyCode === 27) {
-        setCrux(null);
+    if (escKeyDown) {
+      setCrux(null);
       }
-    }
-    document.addEventListener('keydown', handleKeyDown);
-    return document.removeEventListener('keydown', handleKeyDown);
-    }, [])
+    }, [escKeyDown])
 
   useEffect(() => {
     setBeta([]);
@@ -93,7 +90,6 @@ function Content(props) {
               name={params.name}
               id={route._id}
               image={params.image}
-              holds={holds}
               selectedHold={selectedHold}
               crux={params.crux}
               style={params.style}
@@ -196,7 +192,9 @@ function Content(props) {
           handleNoteChange={handleHoldNote}
           handleDeleteClick={deleteHold}
           swapHoldPositions={swapHoldPositions} />
-        <BetaDashboard beta={props.route.beta} handleBetaClick={handleBetaClick} />
+        <BetaDashboard
+          beta={props.route.beta}
+          handleBetaClick={handleBetaClick} />
       </div>
     </div>
     )
