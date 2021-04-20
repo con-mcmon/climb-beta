@@ -3,6 +3,8 @@ import { Switch, Route, Link, useRouteMatch } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import { Content } from './content';
+import Login from './login';
+import Register from './register';
 
 function App(props) {
   return (
@@ -14,11 +16,23 @@ function App(props) {
         <li>
           <Link to='/routes'>Routes</Link>
         </li>
+        <li>
+          <Link to='/login'>Login</Link>
+        </li>
+        <li>
+          <Link to='/register'>Register</Link>
+        </li>
       </ul>
 
       <Switch>
         <Route path='/routes'>
           <Routes />
+        </Route>
+        <Route path='/login'>
+          <Login />
+        </Route>
+        <Route path='/register'>
+          <Register />
         </Route>
         <Route path='/'>
           <Home />
@@ -29,9 +43,10 @@ function App(props) {
 }
 
 function Home(props) {
+
   return (
     <div>
-      <h1>Beta Builder</h1>
+      <h1>Beta Builder Home</h1>
     </div>
     )
   }
