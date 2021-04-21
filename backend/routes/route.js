@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
 		res.send(route);
 	}
   catch {
-    res.status(404);
+    res.status(404).send();
     res.send({ error: 'Invalid Body' });
 	}
 	})
@@ -31,7 +31,7 @@ router.delete('/', async (req, res) => {
 		res.send('cleared');
 	}
 	catch {
-		res.status(404);
+		res.status(404).send();
 		res.send('clear failed');
 	}
 	})
@@ -42,7 +42,7 @@ router.get('/:id', async (req, res) => {
     res.send(route);
   }
   catch {
-    res.status(404);
+    res.status(404).send();
     res.send(invalidRouteMessage);
   }
 })
@@ -58,7 +58,7 @@ router.patch('/:id', async (req, res) => {
     await route.save();
 		res.send(route);
 	} catch {
-		res.status(404)
+		res.status(404).send();
 		res.send(invalidRouteMessage)
 	}
 })
@@ -68,7 +68,7 @@ router.delete('/:id', async (req, res) => {
 		await Route.deleteOne({ _id: req.params.id });
 		res.status(204).send();
 	} catch {
-		res.status(404);
+		res.status(404).send();
 		res.send(invalidRouteMessage);
 	}
 })

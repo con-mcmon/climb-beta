@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
 
 		res.status(200).send('valid credentials'); //TODO send session cookie
 	} catch {
-		res.status(500);
+		res.status(500).send();
 	}
 })
 
@@ -55,7 +55,7 @@ router.post('/register', async (req, res) => {
 
 		res.send(user);
 	} catch {
-		res.status(500);
+		res.status(500).send();
 	}
 })
 
