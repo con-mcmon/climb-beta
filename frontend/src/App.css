@@ -146,3 +146,7 @@ div.tool-box {
 .beta-card span {
   pointer-events: none;
 }
+
+.login {
+  background: grey;
+}

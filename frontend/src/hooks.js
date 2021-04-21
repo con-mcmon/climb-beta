@@ -60,4 +60,23 @@ function useDivCenter(ref, coordinates) {
   return center;
 }
 
-export { useDivSize, useDivCenter, useKey }
+function useClicked(ref) {
+  const [clicked, setClicked] = useState(false);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+        if (ref.current && ref.current.contains(event.target)) {
+          setClicked(true);
+        } else {
+          setClicked(false);
+        }
+      }
+
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+    }, []);
+
+  return clicked;
+}
+
+export { useDivSize, useDivCenter, useKey, useClicked }
