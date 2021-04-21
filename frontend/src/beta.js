@@ -4,21 +4,49 @@ import styles from './style';
 import { useDivCenter } from './hooks';
 
 function BetaDashboard(props) {
+  const rendered = (id) => {
+    for (const beta of props.renderedBeta) {
+      if (beta._id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   return (
     <div className='beta-dashboard'>
       <h1>Beta</h1>
-      {props.beta.map(({ _id, holds }, index) => <BetaCard id={_id} key={_id} onClick={props.handleBetaClick} />)}
+      {props.beta.map(({ _id, holds }, index) => {
+        return (
+          <BetaCard
+            id={_id}
+            holdNumber={holds.length}
+            rendered={rendered(_id)}
+            key={_id}
+            onClick={props.handleBetaClick} /> )
+            })}
     </div>
     )
 }
 
 function BetaCard(props) {
+  const style = () => {
+    let style = {};
+    if (props.rendered) {
+      style.opacity = 1.0;
+    }
+    return style;
+  }
+  const handleClick = () => props.onClick(props.rendered, props.id);
+
   return (
     <div
       className='beta-card'
       id={props.id}
-      onClick={props.onClick} >
-      <span>{props.id}</span>
+      onClick={handleClick}
+      style={style()} >
+      <p>{`ID: ${props.id}`}</p>
+      <p>{`No. of Holds: ${props.holdNumber}`}</p>
     </div>
     )
 }

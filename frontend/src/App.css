@@ -127,7 +127,7 @@ div.tool-box {
 .beta-dashboard {
   width: 100%;
   height: 40%;
-  margin: auto;
+  margin: 5px auto;
   overflow: auto;
   border: solid black;
 }
@@ -137,14 +137,16 @@ div.tool-box {
   margin: 5px;
   padding: 5px;
   border: solid black;
+  opacity: 0.5;
+  cursor: pointer;
 }
 
 .beta-card:hover {
-  background: grey;
+  opacity: 1.0;
 }
 
-.beta-card span {
-  pointer-events: none;
+.beta-card p {
+  margin: 5px;
 }
 
 .login {

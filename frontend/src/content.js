@@ -9,7 +9,7 @@ import { useKey } from './hooks';
 function Content(props) {
   const [holds, setHolds] = useState([]);
   const [selectedHold, setSelectedHold] = useState(null);
-  const [beta, setBeta] = useState([]);
+  const [renderedBeta, setRenderedBeta] = useState([]);
   const [crux, setCrux] = useState(null);
 
   const { routeId } = useParams();
@@ -46,7 +46,7 @@ function Content(props) {
               selectedHold={selectedHold}
               crux={params.crux}
               style={params.style}
-              beta={beta}
+              beta={renderedBeta}
               handleCruxClick={(name) => setCrux(name)}
               handleCloseClick={() => setCrux(null)}
               cruxOpen={params.cruxOpen}
@@ -122,12 +122,12 @@ function Content(props) {
 
   const handleHoldMouseOver = (id, hovered) => hovered ? setSelectedHold(id) : setSelectedHold(null);
 
-  const handleBetaClick = (e) => {
-    const id = e.target.id;
-    const routeBeta = props.route.beta.find(({ _id }) => _id === id);
-    //don't render duplicate beta on Route
-    if (!beta.find(({ _id }) => _id === id)) {
-      setBeta((beta) => [...beta, routeBeta]);
+  const handleBetaClick = (rendered, id) => {
+    if (!rendered) {
+      const routeBeta = props.route.beta.find(({ _id }) => _id === id);
+      setRenderedBeta((beta) => [...beta, routeBeta]);
+    } else {
+      setRenderedBeta((beta) => beta.filter(({ _id }) => _id !== id));
     }
   }
 
@@ -145,6 +145,7 @@ function Content(props) {
           swapHoldPositions={swapHoldPositions} />
         <BetaDashboard
           beta={props.route.beta}
+          renderedBeta={renderedBeta}
           handleBetaClick={handleBetaClick} />
       </div>
     </div>
