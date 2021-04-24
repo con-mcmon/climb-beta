@@ -5,21 +5,15 @@ import axios from 'axios';
 function Login(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [response, setResponse] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const loginStatus = await login(username, password);
-    if (loginStatus) setLoggedIn(true);
-  }
-
-  const login = async (username, password) => {
-    try {
-      return await axios.post('/user/login', { username, password });
-    } catch(err) {
-      return false;
-    }
+    axios.post('/user/login', { username, password })
+      .then((res) => setLoggedIn(true))
+      .catch((err) => setResponse(err.response.data))
   }
 
   const handleChange = (e) => {
@@ -46,6 +40,7 @@ function Login(props) {
           onChange={handleChange} />
         <input type="submit" value='Login' />
       </form>
+      <p>{response}</p>
       {loggedIn ? <Redirect to='/' /> : null}
     </div>
     )
