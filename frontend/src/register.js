@@ -24,9 +24,7 @@ function Register(props) {
     if (validInputs()) {
       axios.post('/user/register', { username, email, password })
         .then((res) => setRegistered(true))
-        .catch((err) => {
-          setResponseMessage(err.response.data);
-          })
+        .catch((err) => setResponseMessage(err.response.data))
       }
     }
 
@@ -146,9 +144,9 @@ function Register(props) {
           value={email}
           placeholder='email'
           onChange={handleChange} />
-        {registerResponse()}
         <input type='submit' value='Register' />
       </form>
+      {registerResponse()}
       {registered ? <Redirect to='/' /> : null}
     </div>
     )
