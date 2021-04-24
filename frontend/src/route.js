@@ -121,4 +121,4 @@ function ToolBox(props) {
   )
 }
 
-export { Route };
+export default Route;

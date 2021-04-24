@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import './App.css';
 import { HoldDashboad } from './holds';
 import { BetaDashboard } from './beta';
-import { Route } from './route';
+import Route from './route';
 import { useKey } from './hooks';
 
 function Content(props) {
@@ -152,4 +152,4 @@ function Content(props) {
     )
 }
 
-export { Content };
+export default Content;
