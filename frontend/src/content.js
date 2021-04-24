@@ -55,7 +55,6 @@ function Content(props) {
               addHold={addHold}
               deleteHold={deleteHold}
               handleHoldNote={handleHoldNote}
-              swapHoldPositions={swapHoldPositions}
               handleHoldMouseOver={handleHoldMouseOver} />
   }
 

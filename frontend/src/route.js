@@ -60,8 +60,6 @@ function Route(props) {
     props.handleMouseMove(id, x, y);
   }
 
-  const swapHoldID = (id, down) => props.swapHoldID(id, down);
-
   //Beta
   const renderBeta = () => props.beta.map(({ _id, holds }) => <Beta id={_id} holds={holds} key={_id} imageDimensions={imageDimensions} />);
 
