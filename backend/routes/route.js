@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateUser } = require('../middleware');
 const { Route } = require('../models/route');
 
 const invalidRouteMessage = { error: 'Invalid Route' };

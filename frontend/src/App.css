@@ -150,5 +150,19 @@ div.tool-box {
 }
 
 .login {
-  background: grey;
+  border: solid black;
+}
+
+.login input {
+  display: block;
+  margin: 1% auto;
+}
+
+.register {
+  border: solid black;
+}
+
+.register input {
+  display: block;
+  margin: 1% auto;
 }

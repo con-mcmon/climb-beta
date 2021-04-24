@@ -5,16 +5,18 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 router.get('/', async (req, res) => {
-	const users = await User.find();
-	res.send(users);
+	const user = res.locals.user;
+	if (user) {
+		res.status(200).send(user);
+	} else {
+		res.status(200).send(false);
+	}
 	})
 
 router.post('/login', async (req, res) => {
 	//verify user
 	try {
-		const encodedCredentials = req.header('Authorization').split(' ')[1];
-		const decodedCredentials = Buffer.from(encodedCredentials, 'base64').toString('ascii');
-		const [username, password] = decodedCredentials.split(':');
+		const { username, password } = req.body;
 
 		const user = await User.findOne({ username: username });
 		if (!user) res.status(401).send('Invalid credentials');
@@ -23,37 +25,46 @@ router.post('/login', async (req, res) => {
 		const passwordMatch = await bcrypt.compare(password, user.password);
 		if (!passwordMatch) res.status(401).send('Invalid credentials');
 
-		res.status(200).send('valid credentials'); //TODO send session cookie
+		//add user ID to session object
+		req.session.userId = user._id
+		res.status(200).send('valid credentials');
 	} catch {
 		res.status(500).send();
 	}
 })
 
+router.post('/logout', (req, res) => {
+		req.session.destroy((err) => {
+				if (err) res.status(500).send()
+
+				res.clearCookie('connect.sid');
+				res.status(200).send({ redirect: '/login' });
+			});
+	})
+
 router.post('/register', async (req, res) => {
 	//add new user
   try {
+		const { username, email, password } = req.body;
+
 		//check if username or email already exists
-		const userNameExists = await User.findOne({username: req.body.username});
-		if (userNameExists) res.status(400).send('username exists');
+		const usernameExists = await User.findOne({ username: username });
+		if (usernameExists) res.status(400).send('Username exists');
 
-		const emailExists = await User.findOne({email: req.body.email});
-		if (emailExists) res.status(400).send('email in use');
-
-		//validate password meets criteria
-		const password = req.body.password;
-		const hashedPass = await bcrypt.hash(password, 10);
+		const emailExists = await User.findOne({ email: email });
+		if (emailExists) res.status(400).send('Email already registered');
 
     const user = new User({
-			firstName: req.body.firstName,
-			lastName: req	.body.lastName,
-			username: req.body.username,
-			email: req.body.email,
-			password: hashedPass
+			username: username,
+			email: email,
+			password: await bcrypt.hash(password, 10)
 			})
 
 		await user.save();
 
-		res.send(user);
+		//add user id to session object
+		req.session.userId = user._id
+		res.status(200).send(user);
 	} catch {
 		res.status(500).send();
 	}

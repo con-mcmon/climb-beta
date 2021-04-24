@@ -9,23 +9,14 @@ function Login(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const username = e.target[0].value;
-    const password = e.target[1].value;
 
     const loginStatus = await login(username, password);
     if (loginStatus) setLoggedIn(true);
   }
 
   const login = async (username, password) => {
-    const encodedCredentials = btoa(`${username}:${password}`);
-    const config = {
-      headers: {
-        Authorization: `Basic ${encodedCredentials}`
-      }
-    }
-
     try {
-      return await axios.post('/user/login', {}, config);
+      return await axios.post('/user/login', { username, password });
     } catch(err) {
       return false;
     }
