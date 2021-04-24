@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 
@@ -57,7 +57,7 @@ function Register(props) {
   useEffect(() => {
     function passwordCheck() {
       const hasDigit = /\d+/;
-      const hasSpecial = /[~|`|!|@|#|$|%|^|&|\*|\(|\)|_|-|\+|=|{|\[|}|\]|\||\:|;|"|']+/;
+      const hasSpecial = /[~`!@#$%^&*()_\-+={[}\]|:;"']+/;
       const hasUpperCase = /[A-Z]+/;
 
       if (password.length < 8) {
@@ -76,12 +76,7 @@ function Register(props) {
     }
 
     const message = passwordCheck();
-
-    if (!message) {
-      setPasswordValidationMessage('');
-    } else {
-      setPasswordValidationMessage(message);
-    }
+    setPasswordValidationMessage(message);
     }, [password, confirmPassword])
 
   //check email
@@ -108,7 +103,7 @@ function Register(props) {
     if (e.target.name === 'email') setEmail(value);
   }
 
-  function registerResponse() {
+  function registerMessage() {
     let message;
     if (validationMessage) message = validationMessage;
     else if (responseMessage) message = responseMessage;
@@ -146,7 +141,7 @@ function Register(props) {
           onChange={handleChange} />
         <input type='submit' value='Register' />
       </form>
-      {registerResponse()}
+      {registerMessage()}
       {registered ? <Redirect to='/' /> : null}
     </div>
     )
