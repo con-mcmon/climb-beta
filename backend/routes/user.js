@@ -33,13 +33,13 @@ router.post('/login', async (req, res) => {
 	}
 })
 
-router.post('/logout', (req, res) => {
-		req.session.destroy((err) => {
-				if (err) res.status(500).send()
+router.delete('/logout', (req, res) => {
+	req.session.destroy((err) => {
+			if (err) res.status(500).send()
 
-				res.clearCookie('connect.sid');
-				res.status(200).send({ redirect: '/login' });
-			});
+			res.clearCookie('connect.sid');
+			res.status(200).send({ redirect: '/login' });
+		});
 	})
 
 router.post('/register', async (req, res) => {

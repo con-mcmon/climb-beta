@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Switch, Route, Link, useRouteMatch } from 'react-router-dom';
+import { Switch, Route, Link, Redirect, useRouteMatch } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import { Content } from './content';
@@ -18,6 +18,9 @@ function App(props) {
         </li>
         <li>
           <Link to='/login'>Login</Link>
+        </li>
+        <li>
+          <LogoutButton />
         </li>
         <li>
           <Link to='/register'>Register</Link>
@@ -112,6 +115,23 @@ function Routes(props) {
         </Route>
       </Switch>
     </div>
+    )
+}
+
+function LogoutButton(props) {
+  const [loggedOut, setLoggedOut] = useState(false);
+
+  function handleClick() {
+    axios.delete('/user/logout')
+      .then((res) => setLoggedOut(true))
+      .catch((err) => console.error(err))
+  }
+
+  return (
+    <>
+      <button onClick={handleClick}>Logout</button>
+      {loggedOut ? <Redirect to='/login' /> : null}
+    </>
     )
 }
 

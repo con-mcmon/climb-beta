@@ -22,7 +22,8 @@ const sessionConfig = {
     sameSite: true
   },
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  unset: 'destroy'
 }
 
 if (process.env.ENV === 'PRODUCTION') {
