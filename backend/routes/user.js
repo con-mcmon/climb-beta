@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
 	if (user) {
 		res.status(200).send(user);
 	} else {
-		res.status(200).send(false);
+		res.status(404).send();
 	}
 	})
 

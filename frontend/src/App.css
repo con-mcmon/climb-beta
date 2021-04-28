@@ -1,6 +1,39 @@
-.App {
+.app {
   text-align: center;
-  justify-content: center;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  padding-bottom: 1%;
+  height: 75px;
+  background: #d6d6d6;
+}
+
+#title {
+  font-size: 40px;
+  margin-left: 0;
+}
+
+.header a {
+  font-size: 20px;
+  margin: 0 .5em;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header a:hover {
+  color: #fffdbd;
+}
+
+.left {
+  margin-left: 1%;
+}
+
+.right {
+  margin-left: auto;
 }
 
 .content {

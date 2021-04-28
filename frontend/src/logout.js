@@ -14,7 +14,7 @@ function Logout(props) {
 
   return (
     <>
-      <button onClick={handleClick}>Logout</button>
+      <a onClick={handleClick}>Logout</a>
       {loggedOut ? <Redirect to='/login' /> : null}
     </>
     )

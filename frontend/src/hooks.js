@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 function useKey(code) {
@@ -79,4 +80,16 @@ function useClicked(ref) {
   return clicked;
 }
 
-export { useDivSize, useDivCenter, useKey, useClicked }
+function useLoggedIn() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    axios.get('/user')
+      .then((res) => setLoggedIn(true))
+      .catch((err) => setLoggedIn(false))
+      })
+
+    return loggedIn;
+  }
+
+export { useDivSize, useDivCenter, useKey, useClicked, useLoggedIn }

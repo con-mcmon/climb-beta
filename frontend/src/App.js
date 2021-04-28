@@ -1,31 +1,15 @@
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import './App.css';
+import Header from './header';
 import Home from './home';
 import RouteHome from './route-home';
 import Login from './login';
-import Logout from './logout';
 import Register from './register';
 
 function App(props) {
   return (
-    <div className='App' >
-      <ul>
-        <li>
-          <Link to='/'>Home</Link>
-        </li>
-        <li>
-          <Link to='/routes'>Routes</Link>
-        </li>
-        <li>
-          <Link to='/login'>Login</Link>
-        </li>
-        <li>
-          <Logout />
-        </li>
-        <li>
-          <Link to='/register'>Register</Link>
-        </li>
-      </ul>
+    <div className='app' >
+      <Header />
 
       <Switch>
         <Route path='/routes'>
