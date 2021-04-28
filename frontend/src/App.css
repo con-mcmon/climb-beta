@@ -62,12 +62,24 @@
 }
 
 .hold-dashboard {
+  position: relative;
+  align-items: center;
   width: 100%;
   height: 60%;
   margin: auto;
   overflow: auto;
   border-style: solid;
   background-color: #e1e2e3;
+}
+
+.footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.hold-dashboard button {
+  margin: auto;
 }
 
 .hold-card {

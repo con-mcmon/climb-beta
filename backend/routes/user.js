@@ -7,6 +7,7 @@ const User = require('../models/user');
 router.get('/', async (req, res) => {
 	const user = res.locals.user;
 	if (user) {
+		//TODO: dont send user password
 		res.status(200).send(user);
 	} else {
 		res.status(404).send();

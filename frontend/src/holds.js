@@ -1,10 +1,19 @@
 import { useRef, useState, useEffect } from 'react';
+import axios from 'axios';
 import { toPx } from './helpers';
-import { useDivCenter } from './hooks';
+import { useDivCenter, useLoggedIn } from './hooks';
 import styles from './style';
 
 function HoldDashboad(props) {
   const [draggedCard, setDraggedCard] = useState(null);
+
+  const user = useLoggedIn();
+
+  const handleSaveBetaClick = () => {
+    axios.post(`/beta/${props.routeId}`, { holds: props.holds, user: user._id })
+      .then((res) => console.log(res))
+      .catch((err) => console.error(err))
+  }
 
   const sortHolds = ( a, b ) => {
     if ( a.position < b.position ) {
@@ -39,6 +48,9 @@ function HoldDashboad(props) {
   return (
     <div className='hold-dashboard' >
       {renderHolds()}
+      <div className='footer' >
+        {user ? <button onClick={handleSaveBetaClick}>Save Beta</button> : null}
+      </div>
     </div>
     )
   }

@@ -12,7 +12,8 @@ const HoldSchema = new mongoose.Schema({
   })
 
 const BetaSchema = new mongoose.Schema({
-  holds: [HoldSchema]
+  holds: [HoldSchema],
+  user: String
   });
 
 const CruxSchema = new mongoose.Schema({

@@ -4,7 +4,7 @@ import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
 import { Hold, Crux } from './holds';
 import { Beta } from './beta';
-import { useDivSize, useKey } from './hooks';
+import { useDivSize, useKey, useLoggedIn } from './hooks';
 
 function Route(props) {
   const [toolBox, setToolbox] = useState(null);
@@ -78,12 +78,6 @@ function Route(props) {
     setToolbox(null);
   }
 
-  const handleUploadBetaClick = () => {
-    axios.post(`/beta/${props.id}`, props.holds)
-      .then((res) => console.log(res))
-      .catch((err) => console.error(err))
-  }
-
   return (
     <div className='route' style={props.style} >
       <img
@@ -97,7 +91,6 @@ function Route(props) {
       {renderBeta()}
       {toolBox}
       {!props.parent ? <button onClick={props.handleCloseClick}>Close</button> : null}
-      <button onClick={handleUploadBetaClick}>Upload Beta</button>
     </div>
     )
   }

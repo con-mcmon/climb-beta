@@ -136,6 +136,7 @@ function Content(props) {
       {crux !== null ? renderRoute(false) : null}
       <div className='dashboards' >
         <HoldDashboad
+          routeId={props.route._id}
           holds={holds}
           selectedHold={selectedHold}
           handleMouseOver={handleHoldMouseOver}

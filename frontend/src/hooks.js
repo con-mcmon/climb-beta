@@ -85,11 +85,11 @@ function useLoggedIn() {
 
   useEffect(() => {
     axios.get('/user')
-      .then((res) => setLoggedIn(true))
+      .then((user) => setLoggedIn(user.data))
       .catch((err) => setLoggedIn(false))
       })
 
-    return loggedIn;
+  return loggedIn;
   }
 
 export { useDivSize, useDivCenter, useKey, useClicked, useLoggedIn }
