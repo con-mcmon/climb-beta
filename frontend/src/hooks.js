@@ -80,14 +80,14 @@ function useClicked(ref) {
   return clicked;
 }
 
-function useLoggedIn() {
+function useLoggedIn(...dep) {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     axios.get('/user')
       .then((user) => setLoggedIn(user.data))
       .catch((err) => setLoggedIn(false))
-      })
+      }, dep)
 
   return loggedIn;
   }

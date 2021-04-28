@@ -1,9 +1,11 @@
-import { Link, withRouter } from 'react-router-dom';
-import Logout from './logout';
+import { Link, useLocation } from 'react-router-dom';
 import { useLoggedIn } from './hooks';
+import Logout from './logout';
 
 function Header(props) {
-  const loggedIn = useLoggedIn();
+  let location = useLocation();
+
+  const loggedIn = useLoggedIn(location);
 
   return (
     <div className='header' >
@@ -12,11 +14,11 @@ function Header(props) {
         <Link to='/routes'>Routes</Link>
       </div>
       <div className='right' >
-        {loggedIn ? <Logout />: <Link to='/login'>Login</Link>}
+        {loggedIn ? <Logout /> : <Link to='/login'>Login</Link>}
         <Link to='/register'>Register</Link>
       </div>
     </div>
     )
 }
 
-export default withRouter(Header);
+export default Header;
