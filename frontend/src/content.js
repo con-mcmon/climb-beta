@@ -129,6 +129,7 @@ function Content(props) {
 
   return (
     <div className='content'>
+      <h1>{props.route.name}</h1>
       {renderRoute(true)}
       {crux !== null ? renderRoute(false) : null}
       <div className='dashboards' >
