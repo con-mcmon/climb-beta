@@ -62,13 +62,10 @@ function HoldCard(props) {
     props.handleMouseOver(props.id, hovered);
   }
 
-  const [dragging, setDragging] = useState(false);
   const handleDragStart = () => {
-    setDragging(true);
     props.setDraggedCard(props.id);
   }
   const handleDragEnd = () => {
-    setDragging(false);
     props.setDraggedCard(null);
   }
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import './App.css';
 import { HoldDashboad } from './holds';
 import { BetaDashboard } from './beta';
@@ -11,8 +10,6 @@ function Content(props) {
   const [selectedHold, setSelectedHold] = useState(null);
   const [renderedBeta, setRenderedBeta] = useState([]);
   const [crux, setCrux] = useState(null);
-
-  const { routeId } = useParams();
 
   const escKeyDown = useKey(27);
   useEffect(() => {

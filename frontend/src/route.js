@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import './App.css';
 import { toPx, percentToPx, pxToPercent } from './helpers';
 import { Hold, Crux } from './holds';
 import { Beta } from './beta';
-import { useDivSize, useKey, useLoggedIn } from './hooks';
+import { useDivSize, useKey } from './hooks';
 
 function Route(props) {
   const [toolBox, setToolbox] = useState(null);

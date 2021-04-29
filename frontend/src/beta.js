@@ -1,4 +1,4 @@
-import { Component, createRef, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { toPx, percentToPx } from './helpers';
 import styles from './style';
 import { useDivCenter } from './hooks';
