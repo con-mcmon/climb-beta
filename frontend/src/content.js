@@ -8,7 +8,9 @@ import { useKey } from './hooks';
 function Content(props) {
   const [holds, setHolds] = useState([]);
   const [selectedHold, setSelectedHold] = useState(null);
+  const [filteredBeta, setFilteredBeta] = useState(props.route.beta);
   const [renderedBeta, setRenderedBeta] = useState([]);
+  const [hoveredBeta, setHoveredBeta] = useState([]);
   const [crux, setCrux] = useState(null);
 
   const escKeyDown = useKey(27);
@@ -43,7 +45,7 @@ function Content(props) {
               selectedHold={selectedHold}
               crux={params.crux}
               style={params.style}
-              beta={renderedBeta}
+              beta={renderedBeta.concat(hoveredBeta)}
               handleCruxClick={(name) => setCrux(name)}
               handleCloseClick={() => setCrux(null)}
               cruxOpen={params.cruxOpen}
@@ -118,13 +120,50 @@ function Content(props) {
 
   const handleHoldMouseOver = (id, hovered) => hovered ? setSelectedHold(id) : setSelectedHold(null);
 
-  const handleBetaClick = (rendered, id) => {
+  const handleBetaCardClick = (id) => {
+    const rendered = renderedBeta.find(({ _id }) => _id === id);
     if (!rendered) {
-      const routeBeta = props.route.beta.find(({ _id }) => _id === id);
-      setRenderedBeta((beta) => [...beta, routeBeta]);
+      //add beta to renderedBeta, remove beta from hoveredBeta
+      const beta = props.route.beta.find(({ _id }) => _id === id);
+      setRenderedBeta((prevBeta) => [...prevBeta, beta]);
+      setHoveredBeta((prevBeta) => prevBeta.filter(({ _id }) => _id !== id));
     } else {
-      setRenderedBeta((beta) => beta.filter(({ _id }) => _id !== id));
+      setRenderedBeta((prevBeta) => prevBeta.filter(({ _id }) => _id !== id));
     }
+  }
+
+  const handleBetaCardMouseOver = (id, mouseIn) => {
+    const rendered = renderedBeta.find(({ _id }) => _id === id);
+    if (mouseIn && !rendered) {
+      const beta = props.route.beta.find(({ _id }) => _id === id);
+      setHoveredBeta((prevBeta) => [...prevBeta, beta]);
+    } else {
+      setHoveredBeta((prevBeta) => prevBeta.filter(({ _id }) => _id !== id));
+    }
+  }
+
+  const renderAllBeta = () => {
+    if (renderedBeta.length === filteredBeta.length) {
+      setRenderedBeta([]);
+    } else {
+      setRenderedBeta(filteredBeta);
+    }
+  }
+
+  const filterBeta = (param, value) => {
+    const beta = props.route.beta;
+    let filtered = [];
+    const min = value[0];
+    const max = value[1];
+
+    if (param === 'holdAmount') {
+      filtered.push(...beta.filter(({ holds }) => holds.length >= min && holds.length <= max));
+    }
+
+    setFilteredBeta(filtered);
+
+    //beta that is filtered removed from renderedBeta
+    setRenderedBeta((prevBeta) => prevBeta.filter((beta) => filteredBeta.includes(beta)))
   }
 
   return (
@@ -143,8 +182,13 @@ function Content(props) {
           swapHoldPositions={swapHoldPositions} />
         <BetaDashboard
           beta={props.route.beta}
+          filteredBeta={filteredBeta}
           renderedBeta={renderedBeta}
-          handleBetaClick={handleBetaClick} />
+          filterBeta={filterBeta}
+          handleBetaCardClick={handleBetaCardClick}
+          handleBetaCardMouseOver={handleBetaCardMouseOver}
+          handleShowAllBetaClick={renderAllBeta}
+          allBetaRendered={renderedBeta.length === filteredBeta.length} />
       </div>
     </div>
     )

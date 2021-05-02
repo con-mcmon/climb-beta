@@ -14,6 +14,18 @@ router.get('/', async (req, res) => {
 	}
 	})
 
+router.get('/:userId', async (req, res) => {
+	try {
+		const userId = req.params.userId;
+		const user = await User.findOne({ _id: userId });
+
+		if (!user) res.status(401).send('Invalid user ID');
+		res.status(200).send({ username: user.username });
+	} catch {
+		res.status(500).send();
+	}
+	})
+
 router.post('/login', async (req, res) => {
 	//verify user
 	try {

@@ -92,4 +92,16 @@ function useLoggedIn(...dep) {
   return loggedIn;
   }
 
-export { useDivSize, useDivCenter, useKey, useClicked, useLoggedIn }
+function useUsername(userId) {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    axios.get(`/user/${userId}`)
+      .then((res) => setUsername(res.data.username))
+      .catch((err) => console.error(err))
+    }, [])
+
+  return username;
+}
+
+export { useDivSize, useDivCenter, useKey, useClicked, useLoggedIn, useUsername }

@@ -177,6 +177,22 @@ div.tool-box {
   border: solid black;
 }
 
+.beta-dashboard-content {
+  display: flex;
+  flex-direction: row;
+}
+
+.beta-dashboard-column {
+  box-sizing: border-box;
+  width: 50%;
+  margin: 5%;
+}
+
+.beta-list {
+  height: 60%;
+  overflow: scroll;
+}
+
 .beta-card {
   box-sizing: border-box;
   margin: 5px;
