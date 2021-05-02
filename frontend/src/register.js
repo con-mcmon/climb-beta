@@ -103,14 +103,6 @@ function Register(props) {
     if (e.target.name === 'email') setEmail(value);
   }
 
-  function registerMessage() {
-    let message;
-    if (validationMessage) message = validationMessage;
-    else if (responseMessage) message = responseMessage;
-
-    return <p className='response-message'>{message}</p>;
-  }
-
   return (
     <div className='register'>
       <h1>Register</h1>
@@ -141,7 +133,7 @@ function Register(props) {
           onChange={handleChange} />
         <input type='submit' value='Register' />
       </form>
-      {registerMessage()}
+      {<p className='response-message'>{responseMessage || validationMessage}</p>}
       {registered ? <Redirect to='/' /> : null}
     </div>
     )
