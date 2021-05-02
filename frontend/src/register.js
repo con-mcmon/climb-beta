@@ -16,13 +16,19 @@ function Register(props) {
   const [validationMessage, setValidationMessage] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
 
+  //optional user data
+  const [birthdate, setBirthdate] = useState('');
+  const [gender, setGender] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+
   const [registered, setRegistered] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (validInputs()) {
-      axios.post('/user/register', { username, email, password })
+      axios.post('/user/register', { username, email, password, birthdate, gender, height, weight })
         .then((res) => setRegistered(true))
         .catch((err) => setResponseMessage(err.response.data))
       }
@@ -93,14 +99,18 @@ function Register(props) {
     }
     }, [email])
 
-
   function handleChange(e) {
+    const name = e.target.name;
     const value = e.target.value;
 
-    if (e.target.name === 'username') setUsername(value);
-    if (e.target.name === 'password') setPassword(value);
-    if (e.target.name === 'confirmPassword') setVerifyPassword(value);
-    if (e.target.name === 'email') setEmail(value);
+    if (name === 'username') setUsername(value);
+    if (name === 'password') setPassword(value);
+    if (name === 'confirmPassword') setVerifyPassword(value);
+    if (name === 'email') setEmail(value);
+    if (name === 'birthdate') setBirthdate(value);
+    if (name === 'height') setHeight(value);
+    if (name === 'gender') setGender(value);
+    if (name === 'weight') setWeight(value);
   }
 
   return (
@@ -130,6 +140,31 @@ function Register(props) {
           name='email'
           value={email}
           placeholder='email'
+          onChange={handleChange} />
+        <h3>Optional (You can set these later)</h3>
+        <label htmlFor='birthdate'>Birthday</label>
+        <input
+          type='date'
+          name='birthdate'
+          onChange={handleChange} />
+        <select name='gender' onChange={handleChange}>
+          <option default value=''>Gender</option>
+          <option value='male'>Male</option>
+          <option value='female'>Female</option>
+        </select>
+        <input
+          type='number'
+          min='1'
+          name='height'
+          value={height}
+          placeholder='height (inches)'
+          onChange={handleChange} />
+        <input
+          type='number'
+          min='1'
+          name='weight'
+          value={weight}
+          placeholder='weight (lb)'
           onChange={handleChange} />
         <input type='submit' value='Register' />
       </form>

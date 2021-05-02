@@ -22,20 +22,28 @@ const UserSchema = new mongoose.Schema({
     required: false
   },
   biometrics: {
+    birthdate: {
+      type: Date,
+      required: false
+      },
+    gender: {
+      type: String,
+      required: false
+      },
     height: {
-        type: Number,
-        required: false
-        },
+      type: Number,
+      required: false
+      },
     weight: {
-        type: Number,
-        required: false
-        },
+      type: Number,
+      required: false
+      },
     armSpan: {
-        type: Number,
-        required: false
-        }
+      type: Number,
+      required: false
       }
-    })
+    }
+  })
 
 const User = mongoose.model('User', UserSchema);
 

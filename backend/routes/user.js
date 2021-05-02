@@ -58,7 +58,7 @@ router.delete('/logout', (req, res) => {
 router.post('/register', async (req, res) => {
 	//add new user
   try {
-		const { username, email, password } = req.body;
+		const { username, email, password, birthdate, gender, height, weight } = req.body;
 
 		//check if username or email already exists
 		const usernameExists = await User.findOne({ username: username });
@@ -70,8 +70,14 @@ router.post('/register', async (req, res) => {
     const user = new User({
 			username: username,
 			email: email,
-			password: await bcrypt.hash(password, 10)
-			})
+			password: await bcrypt.hash(password, 10),
+			biometrics: {
+				birthdate: birthdate,
+				gender: gender,
+				height: height,
+				weight: weight
+			}
+		})
 
 		await user.save();
 
